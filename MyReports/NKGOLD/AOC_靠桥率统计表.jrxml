@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_parkingRate" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="520c8eab-1f71-415c-a626-4218deab4f81">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[SELECT parkCnt,flightDate,allCnt
+FROM (
+                  SELECT COUNT(*) AS allCnt,
+                       TO_CHAR(pd_srtd- 5/24,'yyyy-mm-dd') AS flightDate
+                  FROM pl_departure pd
+                  WHERE pd.pd_rfst_flightstatus !='X'
+                        AND pd.pd_ral_airline !='8Y'
+						AND pd.pd_ral_airline !='CF'
+                        AND pd.pd_rstc_servicetypecode   NOT IN ('H/Z','H/Y','H/G','L/W','U/H')
+                        AND pd.pd_rsta_stand IS NOT NULL
+                        AND (TO_CHAR(pd.pd_srtd- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
+                         Group by TO_CHAR(pd_srtd- 5/24,'yyyy-mm-dd')
+
+      ) a
+      LEFT JOIN (
+                  SELECT  COUNT(*) AS parkCnt,
+                          TO_CHAR(pd_srtd- 5/24,'yyyy-mm-dd') AS flightDate1
+                  FROM pl_departure pd
+                  WHERE pd.pd_rfst_flightstatus !='X'
+                        AND pd.pd_ral_airline !='8Y'
+						AND pd.pd_ral_airline !='CF'
+                        AND pd.pd_rstc_servicetypecode   NOT IN ('H/Z','H/Y','H/G','L/W','U/H')
+                        AND (pd.pd_rsta_stand BETWEEN '205' AND '231')
+                        AND (TO_CHAR(pd.pd_srtd- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
+                        Group by TO_CHAR(pd_srtd- 5/24,'yyyy-mm-dd')
+                  ) b on a.flightDate = b.flightDate1  ORDER BY flightDate]]>
+	</queryString>
+	<field name="PARKCNT" class="java.lang.Double"/>
+	<field name="FLIGHTDATE" class="java.lang.String"/>
+	<field name="ALLCNT" class="java.lang.Double"/>
+	<variable name="rate" class="java.lang.Double" resetType="Column">
+		<variableExpression><![CDATA[$F{PARKCNT}.doubleValue()/$F{ALLCNT}.doubleValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="all" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{ALLCNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="park" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PARKCNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="allparkrate" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{park}.doubleValue()/$V{all}.doubleValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="202" y="16" width="200" height="40" uuid="fbd286c7-1ac2-4948-b82c-4610b81f6d80"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[靠桥率统计表]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="76" y="0" width="100" height="25" uuid="e6d864f3-43ea-4d50-a4df-67d0acabc24e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="176" y="0" width="100" height="25" uuid="c8af5e79-bc21-444d-b9bc-e2ca9e25e7d5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[总航班]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="276" y="0" width="100" height="25" uuid="0ea25705-79ba-4c6e-99f1-601bf72645e7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[靠桥航班]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="0" width="100" height="25" uuid="29b568eb-ff2c-4e63-bc1c-923bf2e1c9b0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[靠桥率]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="76" y="0" width="100" height="20" uuid="6d40be94-b001-44ba-b237-3f4b57e44275"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FLIGHTDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="0" width="100" height="20" uuid="1466f587-39c2-4768-88a8-5c2dab5db0dc"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ALLCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="0" width="100" height="20" uuid="82ac2636-555c-45e0-aebc-3df188cad535"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PARKCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement x="376" y="0" width="100" height="20" uuid="2a47da94-c854-40da-acfb-764768416567"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{rate}.doubleValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="76" y="0" width="100" height="20" uuid="bfa76d61-0933-48c4-9b43-b0ff32dfd00f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[总计：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="176" y="0" width="100" height="20" uuid="b2f0b40e-30be-4ecc-8462-27795f762851"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{all}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="276" y="0" width="100" height="20" uuid="bc93d3f5-9b68-4d11-ac93-e4cb12f76da7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{park}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement x="376" y="0" width="100" height="20" uuid="df6009f5-a09c-44fc-89de-4712f9014aaf"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{allparkrate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

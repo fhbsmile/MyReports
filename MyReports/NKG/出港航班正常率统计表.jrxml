@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-09-02T14:41:03 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
+	<parameter name="startDateTime" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="endDateTime" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select takeOffDate,
+         allcnt,
+         delcnt,
+         allcnt-delcnt as okcnt,
+         (allcnt-delcnt)/allcnt as rate
+      from(
+        SELECT
+        TO_CHAR(pd.pd_srtd- 5/24,'yyyy-mm-dd') AS takeOffDate,
+        count(1) as allcnt
+        FROM  pl_turn pt
+        LEFT JOIN pl_departure pd ON pt.pt_pd_departure = pd.pd_idseq
+        WHERE
+        TO_CHAR(pd.pd_srtd- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')
+        AND pd.PD_RSTC_SERVICETYPECODE    IN ('W/Z','H/Z','C/B','H/Y','L/W','H/G')
+        AND pd.pd_atot is not null
+        group by  TO_CHAR(pd.pd_srtd- 5/24,'yyyy-mm-dd')     
+       ) allView left join    
+        (
+        SELECT
+        TO_CHAR(pd.pd_srtd- 5/24,'yyyy-mm-dd') AS takeOffDate2,
+        count(1) as delcnt
+        FROM  pl_turn pt
+        LEFT JOIN pl_departure pd ON pt.pt_pd_departure = pd.pd_idseq
+        WHERE
+        TO_CHAR(pd.pd_srtd- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')
+        AND pd.PD_RSTC_SERVICETYPECODE    IN ('W/Z','H/Z','C/B','H/Y','L/W','H/G')
+        AND pd.pd_atot is not null
+        AND ceil((pd.pd_atot-pd.pd_srtd)*24*60 )>25
+        group by  TO_CHAR(pd.pd_srtd- 5/24,'yyyy-mm-dd') ) delView on allView.takeOffDate = delView.takeOffDate2]]>
+	</queryString>
+	<field name="TAKEOFFDATE" class="java.lang.String"/>
+	<field name="ALLCNT" class="java.lang.Double"/>
+	<field name="DELCNT" class="java.lang.Double"/>
+	<field name="OKCNT" class="java.lang.Double"/>
+	<field name="RATE" class="java.lang.Double"/>
+	<variable name="sumOKcnt" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OKCNT}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sumAllcnt" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{ALLCNT}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sumDel" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{DELCNT}.intValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="99" splitType="Stretch">
+			<staticText>
+				<reportElement x="180" y="10" width="200" height="20" uuid="d83a6e0c-7d08-4110-99a0-acd3e36b059e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[离港航班正常率统计表]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="78" width="100" height="20" uuid="32763c18-db19-4964-b571-a7dbe2ac5d41">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="78" width="100" height="20" uuid="dabac4da-c4d0-48d6-9567-2b3a56a04f2b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[正常班次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="78" width="100" height="20" uuid="2640debb-b19f-4aaf-baf5-cef26b5bfe4b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[离港班次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="78" width="100" height="20" uuid="efc8e85f-c61d-4cbe-835f-7cad4f9e0066">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[离港正常率]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="58" width="100" height="20" uuid="23671534-49ad-439e-ad10-5a75cb4eb6c7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[统计区间：]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="327" y="57" width="100" height="20" uuid="8a009dea-d8d1-429f-a644-99b66e8d458f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{startDateTime}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="427" y="58" width="100" height="20" uuid="c07d02d7-b242-449e-8c16-0dc5eacc0fd1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{endDateTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="327" y="78" width="100" height="20" uuid="a72074e4-b26d-428e-b6e8-b6b4b8e8d8cd">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[不正常班次]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="27" y="-1" width="100" height="20" uuid="40f4a608-1c8f-44c3-b7ac-8354372c6360">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{TAKEOFFDATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="227" y="-1" width="100" height="20" uuid="9ea29407-42ca-4a90-8ec7-563387f2dc93">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OKCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="127" y="-1" width="100" height="20" uuid="be54f1e9-fb44-4bad-80e7-989d2c82562d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ALLCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="427" y="-1" width="100" height="20" uuid="d2ff76dd-dca7-4561-96c5-90f87cebbd7e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RATE}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="327" y="-1" width="100" height="20" uuid="5d38a002-c60b-44d2-b799-d2f6b61e2133">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DELCNT}.intValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="227" y="-1" width="100" height="20" uuid="712ac0d8-5e07-4528-b76d-53674d8a7159">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{sumOKcnt}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="127" y="-1" width="100" height="20" uuid="e44b83ea-cb8f-480b-97b8-4aa17c896b06">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{sumAllcnt}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="427" y="-1" width="100" height="20" uuid="6c403cf9-6ccf-413f-845e-f391ebcb4d25">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{sumOKcnt}.doubleValue()/$V{sumAllcnt}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="27" y="-1" width="100" height="20" uuid="2c543de8-a24f-4648-b142-227c6cf66632">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[总计：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="327" y="-1" width="100" height="20" uuid="e9eab5fa-b49f-44b8-ac11-2a15cb962fa8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{sumDel}.intValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

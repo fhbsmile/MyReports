@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-08-03T10:02:42 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_DynamicFlightPlan4_1" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6fe90216-f44a-4847-8d03-b513881b4c65">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="flightDate" class="java.util.Date" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT serviceType,
+  aircraftType,
+  registration ,
+  pa_registration,
+  pd_registration,
+  flightNumberTurnT,
+  decode(substr(flightNumberTurnT,1,1),'/', '',substr(flightNumberTurnT,1,1))||substr(flightNumberTurnT,2,length(flightNumberTurnT)-2)||decode(substr(flightNumberTurnT,-1),'/','',substr(flightNumberTurnT,-1)) as flightNumberTurn,
+  pa_flightnumber,
+  pa_ral_airline,
+  pa_srta,
+  ch_routing_timeT,
+   decode(substr(ch_routing_timeT,1,1),'-', '',substr(ch_routing_timeT,1,1))||substr(ch_routing_timeT,2,length(ch_routing_timeT)-2)||decode(substr(ch_routing_timeT,-1),'-','',substr(ch_routing_timeT,-1)) as ch_routing_time,
+  pd_flightnumber,
+  pd_ral_airline,
+  pd_srtd ,
+  prt_stastation,
+  pa_rsta_stand,
+  pd_rsta_stand,
+  prt_idseq
+  FROM(
+SELECT serviceType,
+  aircraftType,
+  registration ,
+  pa_registration,
+  pd_registration,
+  flightNumberTurnT,
+  pa_flightnumber,
+  pa_ral_airline,
+  pa_srta,
+  REPLACE(ch_routing, '琼',arrivalLegTime||'琼'||departureLegTime ) AS ch_routing_timeT,
+  pd_flightnumber,
+  pd_ral_airline,
+  pd_srtd ,
+  prt_stastation,
+  pa_rsta_stand,
+  pd_rsta_stand,
+  prt_idseq
+FROM
+  (SELECT serviceType,
+    aircraftType,
+    registration ,
+    pa_registration,
+    pd_registration,
+    flightNumberTurnT,
+    pa_flightnumber,
+    pa_ral_airline,
+    DECODE(pa_stotoutstation,NULL,'',TO_CHAR(pa_stotoutstation,'hh24mi'))||'-'||DECODE(pa_srta,NULL,'',TO_CHAR(pa_srta,'hh24mi')) AS arrivalLegTime,
+    pa_stotoutstation,
+    pa_srta,
+    pt_routing,
+    REPLACE(pt_routing, '-', '') AS ch_routing,
+    pd_flightnumber,
+    pd_ral_airline,
+    pd_srtd ,
+    prt_stastation,
+    DECODE(pd_srtd,NULL,'',TO_CHAR(pd_srtd,'hh24mi'))||'-'||DECODE(prt_stastation,NULL,'',TO_CHAR(prt_stastation,'hh24mi')) AS departureLegTime,
+    pa_rsta_stand,
+    pd_rsta_stand,
+    plr.prt_idseq
+  FROM
+    (SELECT pt.pt_idseq,
+      pd.pd_idseq,
+      NVL(pa.PA_RSTC_SERVICETYPECODE,pd.PD_RSTC_SERVICETYPECODE) AS serviceType,
+      NVL(pa.pa_ract_aircrafttype,pd.pd_ract_aircrafttype)       AS aircraftType,
+      NVL(pa.pa_registration,pd.pd_registration)                 AS registration,
+      pa.pa_registration,
+      pd.pd_registration,
+      DECODE(pa.pa_flightnumber,NULL,'',decode(sign(to_date(?,'yyyy-MM-dd hh24:mi:ss')-pa.pa_srta),1,'*','')||pa.pa_flightnumber)||'/'||DECODE(pd.pd_flightnumber,NULL,'',pd.pd_flightnumber) AS flightNumberTurnT,
+      pa.pa_flightnumber ,
+      pa.pa_ral_airline,
+      pa.pa_stotoutstation,
+      pa.pa_srta,
+      pt.pt_routing,
+      pd.pd_flightnumber,
+      pd.pd_ral_airline,
+      pd.pd_srtd,
+      pa.pa_rsta_stand,
+      pd.pd_rsta_stand
+    FROM pl_turn pt
+    LEFT JOIN pl_departure pd
+    ON pt.pt_pd_departure = pd.pd_idseq
+    LEFT JOIN pl_arrival pa
+    ON pt.pt_pa_arrival                = pa.pa_idseq
+    where ((pa_srta between to_date(?,'yyyy-MM-dd hh24:mi:ss') and to_date(?,'yyyy-MM-dd hh24:mi:ss')) and  PA_RFST_FLIGHTSTATUS !='X'
+     and PA_pa_mainflight is null) or ((pd_srtd between to_date(?,'yyyy-MM-dd hh24:mi:ss') and to_date(?,'yyyy-MM-dd hh24:mi:ss')) and  PD_RFST_FLIGHTSTATUS !='X'
+     and PD_pd_mainflight is null)
+    ) aa
+  LEFT JOIN
+    (SELECT pl_routing.prt_idseq,
+      pl_routing.prt_pd_departure ,
+      pl_routing.prt_stastation
+    FROM pl_routing
+    INNER JOIN
+      (SELECT prt_pd_departure ,
+        MIN(prt_numberinleg) AS mNumber
+      FROM pl_routing
+      GROUP BY prt_pd_departure
+      ) prt_m
+    ON (pl_routing.prt_numberinleg =prt_m.mNumber
+    AND pl_routing.prt_pd_departure=prt_m.prt_pd_departure)
+    ) plr ON (aa.pd_idseq          = plr.prt_pd_departure)
+  ))]]>
+	</queryString>
+	<field name="SERVICETYPE" class="java.lang.String"/>
+	<field name="AIRCRAFTTYPE" class="java.lang.String"/>
+	<field name="REGISTRATION" class="java.lang.String"/>
+	<field name="PA_REGISTRATION" class="java.lang.String"/>
+	<field name="PD_REGISTRATION" class="java.lang.String"/>
+	<field name="FLIGHTNUMBERTURNT" class="java.lang.String"/>
+	<field name="FLIGHTNUMBERTURN" class="java.lang.String"/>
+	<field name="PA_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PA_RAL_AIRLINE" class="java.lang.String"/>
+	<field name="PA_SRTA" class="java.sql.Timestamp"/>
+	<field name="CH_ROUTING_TIMET" class="java.lang.String"/>
+	<field name="CH_ROUTING_TIME" class="java.lang.String"/>
+	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_RAL_AIRLINE" class="java.lang.String"/>
+	<field name="PD_SRTD" class="java.sql.Timestamp"/>
+	<field name="PRT_STASTATION" class="java.sql.Timestamp"/>
+	<field name="PA_RSTA_STAND" class="java.lang.String"/>
+	<field name="PD_RSTA_STAND" class="java.lang.String"/>
+	<field name="PRT_IDSEQ" class="java.math.BigDecimal"/>
+	<variable name="index" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="216" y="18" width="151" height="34" uuid="2786bf5a-b711-4b7f-b6eb-66aa52c990f3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="15" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班计划]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="239" y="65" width="51" height="13" uuid="52142697-1a68-4fa9-8ec9-16b6374e4bf6"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班日期:]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="290" y="65" width="51" height="13" uuid="c723edf0-fec4-4c9d-a383-c380d7864606"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{flightDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="51" y="65" width="88" height="13" uuid="4db0d03f-cdca-4cfa-b26e-172eedbe60b8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[制表单位：指挥中心]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="0" width="25" height="20" uuid="912972c9-9e40-4413-865d-33952c46a1d7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="0" width="25" height="20" uuid="4ab0cfab-708e-41c4-ba78-da9b4af4e1b2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[任务]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="51" y="0" width="88" height="20" uuid="d883fc24-3057-4743-af0d-722a7fe791c0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="0" width="34" height="20" uuid="3483dfad-7d99-4eec-8d6f-04acc8b33381"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[机型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="0" width="180" height="20" uuid="1514ae0c-ccce-41ab-a329-bdf5e2ab3fab"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航线及时刻]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="173" y="0" width="51" height="20" uuid="e8a14c67-8a02-4433-a906-6df97f68bdd9"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[机号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="0" width="35" height="20" uuid="ecaf3ae3-9844-41e2-bab1-2adc0e742b28"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[到港]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="474" y="0" width="81" height="20" uuid="65160695-611d-47e9-b356-0d64cfc02499"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="0" width="35" height="20" uuid="710ce1fc-f960-44bd-bda5-3008e65afa4f"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[离港]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="1" y="0" width="25" height="20" uuid="ee9888c1-8bb5-44f8-956f-69dec0575226"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{index}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="26" y="0" width="25" height="20" uuid="9afb178c-cd1a-4a0a-8324-f04cf888b070"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SERVICETYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="0" width="88" height="20" uuid="07e0071a-beb4-434b-8202-6bfd40464a20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FLIGHTNUMBERTURN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="139" y="0" width="34" height="20" uuid="d59675b6-3234-49ab-aee3-80652700ab7d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AIRCRAFTTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="173" y="0" width="51" height="20" uuid="63a61b07-50b4-4d0e-a10f-22c7cefd1b33"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{REGISTRATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="224" y="0" width="180" height="20" uuid="11367e7a-1abf-47ff-88b2-0870271cd3bd"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CH_ROUTING_TIME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="404" y="0" width="35" height="20" uuid="d1e4a0ee-e6b8-4e55-bed0-8761e2a5e3f0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_RSTA_STAND}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="474" y="0" width="81" height="20" uuid="d6b0ccf7-c412-4968-9651-992c3a0f3c0a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="439" y="0" width="35" height="20" uuid="364e21bc-44be-4836-832f-fe5045b1c5b5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_RSTA_STAND}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="505" y="9" width="35" height="20" uuid="6d6675a6-5069-45e2-be34-b69ddd40bec4"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="9" width="52" height="20" uuid="194ea959-23f2-4698-9213-30dbd60ab61a"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

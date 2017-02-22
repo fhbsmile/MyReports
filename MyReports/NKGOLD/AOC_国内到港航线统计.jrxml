@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_DemosticArrivalRoutingAirline" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5f10bb82-1fd2-49ca-8543-df074d2812c0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="startDate" class="java.util.Date"/>
+	<parameter name="endDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select ben.*,ratio_to_report(ben.cnt) over() as rate FROM
+(
+    select pa.PA_RAL_AIRLINE as airline,pa.PA_RAP_PREVIOUSAIRPORT as Airport,airport.rap_city as city ,count(*) as cnt
+     from pl_arrival pa ,REF_AIRPORT airport
+     where pa.Pa_srta is not null and  (pa.Pa_srta between to_date(?,'yyyy-mm-dd hh24:mi:ss') and to_date(?,'yyyy-mm-dd hh24:mi:ss'))
+     and  pa.PA_RAP_PREVIOUSAIRPORT=airport.rap_internalcode
+     and airport.RAP_RCTT_COUNTRYTYPE='D'
+     and pa.PA_RFST_FLIGHTSTATUS !='X'
+     and pa.PA_pa_mainflight is null
+    group by pa.PA_RAP_PREVIOUSAIRPORT,pa.PA_RAL_AIRLINE,airport.rap_city
+    order by pa.PA_RAP_PREVIOUSAIRPORT,pa.PA_RAL_AIRLINE
+) ben]]>
+	</queryString>
+	<field name="AIRLINE" class="java.lang.String"/>
+	<field name="AIRPORT" class="java.lang.String"/>
+	<field name="CITY" class="java.lang.String"/>
+	<field name="CNT" class="java.lang.Double"/>
+	<field name="RATE" class="java.lang.Double"/>
+	<variable name="index" class="java.lang.Integer" incrementType="Group" incrementGroup="AIRPORT" calculation="Count">
+		<variableExpression><![CDATA[$F{AIRPORT}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+	<variable name="groupCnt" class="java.lang.Double" resetType="Group" resetGroup="AIRPORT" calculation="Sum">
+		<variableExpression><![CDATA[$F{CNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="airport" class="java.lang.String" resetType="Group" resetGroup="AIRPORT">
+		<variableExpression><![CDATA[$F{AIRPORT}]]></variableExpression>
+	</variable>
+	<variable name="groupSumRate" class="java.lang.Double" resetType="Group" resetGroup="AIRPORT" calculation="Sum">
+		<variableExpression><![CDATA[$F{RATE}]]></variableExpression>
+	</variable>
+	<variable name="sumCount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CNT}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="sumRate" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{RATE}.doubleValue()]]></variableExpression>
+	</variable>
+	<group name="AIRPORT">
+		<groupExpression><![CDATA[$F{AIRPORT}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<textField>
+					<reportElement uuid="402efa6d-58a1-449a-bfe0-96e0c372ab9d" mode="Opaque" x="79" y="0" width="100" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CITY}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="d74a3575-eebe-4ad9-94d7-d2ed4c288d0f" mode="Opaque" x="379" y="0" width="50" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{groupCnt}.intValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00 %">
+					<reportElement uuid="513d6ae1-cc42-4423-8130-71f5333fc74b" mode="Opaque" x="429" y="0" width="100" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{groupSumRate}.doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement uuid="74e86643-276b-40da-a7ac-6b724dc5045a" mode="Opaque" x="29" y="0" width="50" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{index}.longValue()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement uuid="574d4646-e142-4983-8afa-19e6bac2f199" mode="Opaque" x="279" y="0" width="100" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[合计:]]></text>
+				</staticText>
+				<textField>
+					<reportElement uuid="41dc3e47-7912-4ef4-a37d-dff1e85356c9" mode="Opaque" x="179" y="0" width="100" height="20" backcolor="#CCCCFF"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AIRPORT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="dc231e02-5142-4da5-bf3a-11181f92854d" x="181" y="23" width="207" height="29"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="16" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[地区到港航线统计]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement uuid="27d5f73c-2f62-452e-b650-6e77c85dfdef" x="398" y="59" width="59" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement uuid="2bcd0e90-31a7-40f1-9d3e-05f7e1c24c5e" x="466" y="59" width="63" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{endDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="821488eb-aa26-4e2b-8da4-2b05ef8d4284" x="351" y="59" width="47" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[统计区间:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce5e8c8b-a62f-4078-b2d9-bc830b021907" x="456" y="59" width="10" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[—]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="29">
+			<staticText>
+				<reportElement uuid="1e770aba-2a77-4427-a72e-2bfb2ef17d36" x="29" y="0" width="50" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[序号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="35105e5f-e723-4e8f-8d49-a41de7fb3f83" x="79" y="0" width="100" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航线城市]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b460ce36-525e-47fb-93db-b4dfd2b559a8" x="279" y="0" width="100" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[公司]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6cccb3a6-56b0-4768-a4bd-0eeb97966f30" x="379" y="0" width="50" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[架次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2988346e-5db0-47c4-97a7-86ce407d7b65" x="429" y="0" width="100" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[比重%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3b7ef365-7fb1-4167-97ac-208f6c1e90d7" x="179" y="0" width="100" height="29"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航线3字码]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="54ced426-e404-4267-a3c1-dffa66fd93e8" x="279" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AIRLINE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3780aa77-09c7-4428-a5df-57c6ec0b9ad0" x="379" y="0" width="50" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement uuid="ba4419c2-3b2c-4f6f-93b7-7d67718b87e4" x="429" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RATE}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e66d0e26-c930-487f-a32e-85e5e1b73970" x="29" y="0" width="50" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="760636b2-277a-47bb-9585-0bcc900a7b9f" x="79" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="44787fd5-249e-44ba-a46b-e7f309ddaa42" x="179" y="0" width="100" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30">
+			<textField evaluationTime="Report">
+				<reportElement uuid="4fbe529f-e977-4e38-90a0-69e280f0a5b7" x="501" y="10" width="27" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page">
+				<reportElement uuid="ef3d12ac-4469-4812-9e07-2526c7888a90" x="448" y="10" width="54" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="30" splitType="Stretch">
+			<textField pattern="#,##0.00 %">
+				<reportElement uuid="b1267d7b-7810-4f92-bcbf-e8429351ff36" mode="Opaque" x="429" y="0" width="100" height="30" backcolor="#99FF99"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumRate}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7984483f-ddb0-4cbc-9a6f-47c272da729e" mode="Opaque" x="379" y="0" width="50" height="30" backcolor="#99FF99"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{sumCount}.intValue()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b1763933-4690-4aac-a191-db98cea86533" mode="Opaque" x="29" y="0" width="50" height="30" backcolor="#99FF99"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[合计:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="088a500e-3117-4f22-852e-e3d877ff3a7b" mode="Opaque" x="79" y="0" width="300" height="30" backcolor="#99FF99"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

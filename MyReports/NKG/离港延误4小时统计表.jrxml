@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-09-02T14:27:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="出港航班延误4小时统计表" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true" uuid="6d588fd3-65ea-49f5-aa75-7564c646fbaf">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="243"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="startDateTime" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="endDateTime" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="title" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 
+pt.PT_IDSEQ,
+pd.pd_flightnumber,
+      pd.PD_RAP_NEXTAIRPORT,
+      pd.pd_srtd,
+      pd.pd_atot,
+      ceil((pd.PD_ATOT-pd.pd_srtd)*24*60-25) as delayTime
+      from pl_turn pt
+    LEFT JOIN pl_departure pd
+    ON pt.pt_pd_departure = pd.pd_idseq
+where pd.pd_srtd BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
+and pd.PD_ATOT is not null
+and ceil((pd.PD_ATOT-pd.pd_srtd)*24*60-25) >?]]>
+	</queryString>
+	<field name="PT_IDSEQ" class="java.math.BigDecimal"/>
+	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_RAP_NEXTAIRPORT" class="java.lang.String"/>
+	<field name="PD_SRTD" class="java.sql.Timestamp"/>
+	<field name="PD_ATOT" class="java.sql.Timestamp"/>
+	<field name="DELAYTIME" class="java.lang.Double"/>
+	<variable name="index" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
+	</variable>
+	<title>
+		<band height="100" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="224" y="50" width="60" height="20" uuid="0754ac4c-ec6b-424b-8182-ab50cca86798">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[统计区间：]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="284" y="50" width="90" height="20" uuid="d5527852-0afa-494b-b2f7-4bcbd40b771a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{startDateTime}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="464" y="50" width="90" height="20" uuid="495dc4dd-1381-443d-8b08-1864fbbcfa09">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{endDateTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="104" y="70" width="40" height="30" uuid="939d229d-e4c5-4837-adf5-0e4f00928f95">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[编号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="70" width="90" height="30" uuid="6c442504-0454-4831-99fa-c239445886e7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[下站]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="70" width="90" height="30" uuid="e737e4a1-166c-44ad-915e-9caff617f7d0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[计划离港]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="464" y="70" width="90" height="30" uuid="26cd0314-49ab-4ae0-9b63-7a46c70dba5d">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[实际离港]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="554" y="70" width="71" height="30" uuid="296297c3-9ba7-495a-88b1-b05ca4b6b3d3"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[延误时间(分钟)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="50" width="90" height="20" uuid="22fae22f-3af4-4ed7-b37e-1ba1c55079de"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[到]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="70" width="80" height="30" uuid="66594762-14d1-456e-a05f-bd63d2b54910"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[计划日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="70" width="60" height="30" uuid="2796614a-dc27-4859-b6aa-ff67425a6e69"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[航班号]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="224" y="20" width="330" height="20" uuid="3ea6bb9f-96f7-4d28-babf-82585d7d7afe">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA["离港航班延误统计表("+$P{title}+")"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="yyyy-MM-dd">
+				<reportElement x="144" y="0" width="80" height="20" uuid="13f85b69-493c-4429-ba7b-a256a9fe1e06"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_SRTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="224" y="0" width="60" height="20" uuid="a769aafa-e374-47f9-b463-26e95d27bf12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="374" y="0" width="90" height="20" uuid="894e294f-576c-49d5-86a5-ca9af211a1b1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_SRTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="464" y="0" width="90" height="20" uuid="ec485dfa-0bc0-4121-b75e-3329db90e20c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_ATOT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="284" y="0" width="90" height="20" uuid="fb0533e8-b78d-4c52-bdd3-df8e3be5c8a1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_RAP_NEXTAIRPORT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="104" y="0" width="40" height="20" uuid="7f983e86-a6a9-4c97-8ee6-c67c9251c1b9"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{index}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="554" y="0" width="71" height="20" uuid="34915956-58b4-481f-986d-cbfcb2e6f371"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DELAYTIME}.intValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
