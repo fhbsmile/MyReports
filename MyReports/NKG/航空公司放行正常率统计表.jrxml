@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-07-05T13:37:53 -->
+<!-- 2017-03-03T17:58:05 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
@@ -9,34 +9,34 @@
 	<queryString>
 		<![CDATA[select allf.pd_ral_airline,
       allcnt,
-      delcnt,
-      allcnt-delcnt as okcnt,
-	  (allcnt-delcnt)/allcnt as rate
+      NVL(delcnt1,0) as delcnt,
+      nvl(allcnt-NVL(delcnt1,0),0) as okcnt,
+	  NVL((allcnt-NVL(delcnt1,0))/allcnt,0) as rate
        from(
 SELECT
 pd_ral_airline  ,
 
         count(1) as allcnt
         FROM PL_DEPARTURE , pl_turn, pl_arrival
-       WHERE pt_pd_departure=pd_idseq
+       WHERE pt_pd_departure=pd_idseq(+)
        and pt_pa_arrival=pa_idseq(+)
-       and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
-        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z')
-        AND pd_atot is not null
-        AND pa_aldt is not null
+       and (TO_CHAR(pl_departure.pd_SRTD- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+        AND PL_DEPARTURE.pd_atot is not null
+        AND pl_arrival.pa_aldt is not null
          group by  pd_ral_airline
          )allf
          left join
 (SELECT
          pd_ral_airline,
-        count(1) as delcnt
+        NVL(count(1),0) as delcnt1
       FROM PL_DEPARTURE , pl_turn, pl_arrival
-       WHERE pt_pd_departure=pd_idseq
+       WHERE pt_pd_departure=pd_idseq(+)
        and pt_pa_arrival=pa_idseq(+)
-        and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
-        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z')
-        AND pd_atot is not null
-        AND pa_aldt is not null
+        and (TO_CHAR(pl_departure.pd_SRTD- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+        AND PL_DEPARTURE.pd_atot is not null
+        AND pl_arrival.pa_aldt is not null
         AND (
                (
                TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND  pd_atot > pd_srtd +25/1440 AND pd_atot>pa_aldt+(pd_srtd-pa_srta) +35/1440
@@ -46,7 +46,6 @@ pd_ral_airline  ,
          
              )
          group by   pd_ral_airline)delf on allf.pd_ral_airline = delf.pd_ral_airline
-           where delcnt is not null
            order by   allf.pd_ral_airline, rate]]>
 	</queryString>
 	<field name="PD_RAL_AIRLINE" class="java.lang.String"/>

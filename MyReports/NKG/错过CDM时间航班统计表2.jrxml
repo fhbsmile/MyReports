@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-09-02T15:03:49 -->
+<!-- 2017-03-03T14:35:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="错过CDM时间航班统计表2" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="41da9f74-fb8c-4728-b464-7f545aa8f11b">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 	<parameter name="startDateTime" class="java.util.Date" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="endDateTime" class="java.util.Date" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT pt.pt_idseq,
-      pd.pd_flightnumber,
-      pd.pd_srtd,
-      pd.pd_atot,
-      pd.pd_EOBTATC,
-      pd.pd_ctot, 
-      pd.pd_aegt,
+      pd.*,
       ceil((pd.pd_atot-pd.pd_EOBTATC)*24*60) as delayTime1,
       ceil((pd.pd_aegt-pd.pd_EOBTATC)*24*60) as delayTime2,
       ceil((pd.pd_atot-pd.pd_ctot)*24*60) as delayTime3,
@@ -24,7 +19,6 @@
     LEFT JOIN pl_departure pd
     ON pt.pt_pd_departure = pd.pd_idseq
     where pd.pd_srtd between to_date(?,'yyyy-MM-dd hh24:mi:ss') and to_date(?,'yyyy-MM-dd hh24:mi:ss')
-    and pd.PD_RSTC_SERVICETYPECODE ='W/Z'
     and pd.pd_atot is not null
     and pd.pd_aegt is not null
     and pd.pd_ctot is not null
@@ -32,12 +26,175 @@
     and ceil((pd.pd_atot-pd.pd_ctot)*24*60)>?]]>
 	</queryString>
 	<field name="PT_IDSEQ" class="java.lang.Double"/>
+	<field name="PD_IDSEQ" class="java.lang.Double"/>
 	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
-	<field name="PD_SRTD" class="java.sql.Timestamp"/>
-	<field name="PD_ATOT" class="java.sql.Timestamp"/>
-	<field name="PD_EOBTATC" class="java.sql.Timestamp"/>
+	<field name="PD_RSTC_SERVICETYPECODE" class="java.lang.String"/>
+	<field name="PD_RACT_AIRCRAFTTYPE" class="java.lang.String"/>
+	<field name="PD_RAP_DESTINATIONAIRPORT" class="java.lang.String"/>
+	<field name="PD_RAP_NEXTAIRPORT" class="java.lang.String"/>
+	<field name="PD_RTRM_TERMINAL" class="java.lang.String"/>
+	<field name="PD_SEATS" class="java.lang.Double"/>
+	<field name="PD_PROFILE" class="java.lang.String"/>
+	<field name="PD_MODTIME" class="java.sql.Timestamp"/>
+	<field name="PD_MODUSER" class="java.lang.String"/>
+	<field name="PD_CREATETIME" class="java.sql.Timestamp"/>
+	<field name="PD_RAL_AIRLINE" class="java.lang.String"/>
+	<field name="PD_RCTT_COUNTRYTYPE" class="java.lang.String"/>
+	<field name="PD_PD_MAINFLIGHT" class="java.lang.Double"/>
+	<field name="PD_RFST_FLIGHTSTATUS" class="java.lang.String"/>
+	<field name="PD_CALLSIGN" class="java.lang.String"/>
+	<field name="PD_RSTA_STAND" class="java.lang.String"/>
+	<field name="PD_RSTA_REFSTAND" class="java.lang.String"/>
+	<field name="PD_REGISTRATION" class="java.lang.String"/>
+	<field name="PD_RAC_AIRCRAFT" class="java.lang.Double"/>
+	<field name="PD_RRWY_RUNWAY" class="java.lang.String"/>
+	<field name="PD_CHARGEABLEEXEMPT" class="java.lang.String"/>
+	<field name="PD_CHAREABLEPERMIT" class="java.lang.String"/>
+	<field name="PD_DOUBLEGATEWAYIND" class="java.lang.String"/>
+	<field name="PD_CBPIND" class="java.lang.String"/>
+	<field name="PD_CASHIND" class="java.lang.String"/>
+	<field name="PD_CASHAMOUNT" class="java.lang.Double"/>
+	<field name="PD_PAYMENTREFERENCE" class="java.lang.String"/>
+	<field name="PD_CHARGEFORMNO" class="java.lang.String"/>
+	<field name="PD_CASHLODGEMENTS" class="java.lang.String"/>
+	<field name="PD_BILLINGCOMMENTS" class="java.lang.String"/>
+	<field name="PD_ZEROPAXIND" class="java.lang.String"/>
+	<field name="PD_ZEROFREIGHTIND" class="java.lang.String"/>
+	<field name="PD_ZEROMAILIND" class="java.lang.String"/>
+	<field name="PD_ZEROTOTALWEIGHTIND" class="java.lang.String"/>
+	<field name="PD_TOTALPAX" class="java.lang.Double"/>
+	<field name="PD_TRANSITPAX" class="java.lang.Double"/>
+	<field name="PD_TRANSFERPAX" class="java.lang.Double"/>
+	<field name="PD_FAILEDIATAMESSAGES" class="java.lang.Double"/>
+	<field name="PD_SOBT" class="java.sql.Timestamp"/>
+	<field name="PD_EOBT" class="java.sql.Timestamp"/>
+	<field name="PD_ETOT" class="java.sql.Timestamp"/>
+	<field name="PD_ASRT" class="java.sql.Timestamp"/>
+	<field name="PD_ASAT" class="java.sql.Timestamp"/>
+	<field name="PD_TOBT" class="java.sql.Timestamp"/>
+	<field name="PD_TSAT" class="java.sql.Timestamp"/>
+	<field name="PD_TTOT" class="java.sql.Timestamp"/>
+	<field name="PD_TTOTSENT" class="java.sql.Timestamp"/>
 	<field name="PD_CTOT" class="java.sql.Timestamp"/>
+	<field name="PD_RRMK_REMARK" class="java.lang.String"/>
+	<field name="PD_SAFEIND" class="java.lang.String"/>
+	<field name="PD_RSTA_STANDARDSTAND" class="java.lang.String"/>
+	<field name="PD_EXOT" class="java.lang.Double"/>
+	<field name="PD_PRIORITYFIELD" class="java.lang.String"/>
+	<field name="PD_IATAPRIORITY" class="java.lang.Double"/>
+	<field name="PD_IFPLID" class="java.lang.String"/>
+	<field name="PD_TOBTCHANGES" class="java.lang.Double"/>
+	<field name="PD_AIRBRIDGES" class="java.lang.String"/>
+	<field name="PD_PRMPAX" class="java.lang.Double"/>
+	<field name="PD_ASSISTINGPAX" class="java.lang.Double"/>
+	<field name="PD_PRMLEVYPAX" class="java.lang.Double"/>
+	<field name="PD_CANCELLATIONTIME" class="java.sql.Timestamp"/>
+	<field name="PD_DEPARTUREGATES" class="java.lang.String"/>
+	<field name="PD_GPU" class="java.lang.String"/>
+	<field name="PD_PAYMENTMODE" class="java.lang.String"/>
+	<field name="PD_RHA_AGENTCI" class="java.lang.String"/>
+	<field name="PD_RHA_AGENTBAG" class="java.lang.String"/>
+	<field name="PD_CODESHAREFLIGHTNUMBERS" class="java.lang.String"/>
+	<field name="PD_RAMP_HANDLINGAGENT" class="java.lang.String"/>
+	<field name="PD_AOBT" class="java.sql.Timestamp"/>
+	<field name="PD_ATOT" class="java.sql.Timestamp"/>
+	<field name="PD_GPUIND" class="java.lang.String"/>
+	<field name="PD_BUSIND" class="java.lang.String"/>
+	<field name="PD_RCO_CONCOURSE" class="java.lang.String"/>
+	<field name="PD_COUNTERS" class="java.lang.String"/>
+	<field name="PD_ACZT" class="java.sql.Timestamp"/>
+	<field name="PD_AEZT" class="java.sql.Timestamp"/>
+	<field name="PD_AGHT" class="java.lang.Double"/>
+	<field name="PD_ARDT" class="java.sql.Timestamp"/>
+	<field name="PD_ARZT" class="java.sql.Timestamp"/>
+	<field name="PD_ASBT" class="java.sql.Timestamp"/>
+	<field name="PD_ECZT" class="java.sql.Timestamp"/>
+	<field name="PD_EEZT" class="java.sql.Timestamp"/>
+	<field name="PD_ERZT" class="java.sql.Timestamp"/>
+	<field name="PD_DISPLAYCODE" class="java.lang.String"/>
+	<field name="PD_RFST_REFFLIGHTSTATUS" class="java.lang.String"/>
+	<field name="PD_INDICATORFIELD" class="java.lang.String"/>
+	<field name="PD_POBT" class="java.sql.Timestamp"/>
+	<field name="PD_ACGT" class="java.sql.Timestamp"/>
 	<field name="PD_AEGT" class="java.sql.Timestamp"/>
+	<field name="PD_AEBT" class="java.sql.Timestamp"/>
+	<field name="PD_SECONDCALL" class="java.sql.Timestamp"/>
+	<field name="PD_FPLACTIVATIONTIME" class="java.sql.Timestamp"/>
+	<field name="PD_BOBT" class="java.sql.Timestamp"/>
+	<field name="PD_COUNTERAREAS" class="java.lang.String"/>
+	<field name="PD_BILLINGSTATUS" class="java.lang.String"/>
+	<field name="PD_TOBTSTATUS" class="java.lang.String"/>
+	<field name="PD_EOBTLOCAL" class="java.sql.Timestamp"/>
+	<field name="PD_EOBTATC" class="java.sql.Timestamp"/>
+	<field name="PD_TOBTCONFIRMATIONTIME" class="java.sql.Timestamp"/>
+	<field name="PD_DIR" class="java.lang.String"/>
+	<field name="PD_NEXTINFOTIME" class="java.sql.Timestamp"/>
+	<field name="PD_OPSCOMMENT" class="java.lang.String"/>
+	<field name="PD_ATCFPLSTATUS" class="java.lang.String"/>
+	<field name="PD_RMSC_SCENARIO" class="java.lang.Double"/>
+	<field name="PD_EXTERNALSYSTEMID" class="java.lang.String"/>
+	<field name="PD_RACT_PLANNEDACT" class="java.lang.String"/>
+	<field name="PD_OPERATOR" class="java.lang.String"/>
+	<field name="PD_LOCKIND" class="java.lang.String"/>
+	<field name="PD_DELAYREASONS" class="java.lang.String"/>
+	<field name="PD_FUELREQUIRED" class="java.lang.String"/>
+	<field name="PD_DEPARTUREBELTS" class="java.lang.String"/>
+	<field name="PD_GOTOGATE" class="java.sql.Timestamp"/>
+	<field name="PD_EXOTPAD" class="java.lang.Double"/>
+	<field name="PD_TAXITIME" class="java.lang.Double"/>
+	<field name="PD_DPISTATUS" class="java.lang.String"/>
+	<field name="PD_DPITIME" class="java.sql.Timestamp"/>
+	<field name="PD_MILESTONEINDSTRING" class="java.lang.String"/>
+	<field name="PD_SALT_CDMALARM" class="java.lang.String"/>
+	<field name="PD_RCDMS_STATUS" class="java.lang.Double"/>
+	<field name="PD_RTOT" class="java.sql.Timestamp"/>
+	<field name="PD_STOT" class="java.sql.Timestamp"/>
+	<field name="PD_FREEZEIND" class="java.lang.String"/>
+	<field name="PD_SEQUENCERPRIO" class="java.lang.Double"/>
+	<field name="PD_TSATREASON" class="java.lang.String"/>
+	<field name="PD_FLIGHTRULE" class="java.lang.String"/>
+	<field name="PD_CHECKPOINTPROFILE" class="java.lang.String"/>
+	<field name="PD_SID" class="java.lang.String"/>
+	<field name="PD_STB" class="java.sql.Timestamp"/>
+	<field name="PD_STE" class="java.sql.Timestamp"/>
+	<field name="PD_DEICINGPAD" class="java.lang.String"/>
+	<field name="PD_DEICINGCOUNTER" class="java.lang.Double"/>
+	<field name="PD_EXTERNALFLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_OPERATORFLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_DELAY" class="java.lang.Double"/>
+	<field name="PD_PUSHBACKNECESSARYIND" class="java.lang.String"/>
+	<field name="PD_DOORCLOSETIME" class="java.sql.Timestamp"/>
+	<field name="PD_CREATEREASON" class="java.lang.String"/>
+	<field name="PD_OFFBRIDGE" class="java.sql.Timestamp"/>
+	<field name="PD_VIPIND" class="java.lang.String"/>
+	<field name="PD_VIPCOMMENT" class="java.lang.String"/>
+	<field name="PD_PUBLICCOMMENT" class="java.lang.String"/>
+	<field name="PD_SRTD" class="java.sql.Timestamp"/>
+	<field name="PD_ALDTNEXT" class="java.sql.Timestamp"/>
+	<field name="PD_STANDCHANGECNT" class="java.lang.Double"/>
+	<field name="PD_BLOCKEDIND" class="java.lang.String"/>
+	<field name="PD_ERWT" class="java.lang.Double"/>
+	<field name="PD_STS" class="java.lang.String"/>
+	<field name="PD_AIRTRAFFIC" class="java.lang.String"/>
+	<field name="PD_SLOTMSG" class="java.lang.String"/>
+	<field name="PD_SUSIND" class="java.lang.String"/>
+	<field name="PD_ATCCOMMENT" class="java.lang.String"/>
+	<field name="PD_EXTERNALDATE" class="java.sql.Timestamp"/>
+	<field name="PD_DCTIME" class="java.sql.Timestamp"/>
+	<field name="PD_GPT" class="java.sql.Timestamp"/>
+	<field name="PD_GGT" class="java.sql.Timestamp"/>
+	<field name="PD_GCT" class="java.sql.Timestamp"/>
+	<field name="PD_MGPT" class="java.sql.Timestamp"/>
+	<field name="PD_MGGT" class="java.sql.Timestamp"/>
+	<field name="PD_MGCT" class="java.sql.Timestamp"/>
+	<field name="PD_INFOGATE" class="java.lang.String"/>
+	<field name="PD_TOBTSEQUENCER" class="java.sql.Timestamp"/>
+	<field name="PD_CTOTSEQUENCER" class="java.sql.Timestamp"/>
+	<field name="PD_TAXITIMESEQUENCER" class="java.lang.Double"/>
+	<field name="PD_DPITOBT" class="java.sql.Timestamp"/>
+	<field name="PD_DPITSAT" class="java.sql.Timestamp"/>
+	<field name="PD_EOBTATCCHANGECNT" class="java.lang.Double"/>
+	<field name="PD_ESTIMATEDDOORCLOSETIME" class="java.sql.Timestamp"/>
 	<field name="DELAYTIME1" class="java.lang.Double"/>
 	<field name="DELAYTIME2" class="java.lang.Double"/>
 	<field name="DELAYTIME3" class="java.lang.Double"/>
@@ -63,7 +220,7 @@
 				<text><![CDATA[错过CDM时间航班统计表]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="715" y="65" width="60" height="35" uuid="98c173af-6b3c-42d9-a6b3-b7eb8d67aa01">
+				<reportElement x="715" y="65" width="45" height="35" uuid="98c173af-6b3c-42d9-a6b3-b7eb8d67aa01">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
@@ -255,6 +412,19 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
 				<text><![CDATA[ATOT-CTOT]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="760" y="65" width="40" height="35" uuid="f86a4e82-2cfa-4423-adb8-28a5480b6841">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[机位]]></text>
+			</staticText>
 		</band>
 	</title>
 	<detail>
@@ -326,7 +496,7 @@
 				<textFieldExpression><![CDATA[$F{PD_EOBTATC}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="715" y="0" width="60" height="20" uuid="0c71182b-5820-404c-b829-b6f1184ccfa5">
+				<reportElement x="715" y="0" width="45" height="20" uuid="0c71182b-5820-404c-b829-b6f1184ccfa5">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -412,6 +582,17 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DELAYTIME3}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="760" y="0" width="40" height="20" uuid="39cac7d0-63bc-4a74-ac77-e1a3e07ff01b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_RSTA_STAND}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
