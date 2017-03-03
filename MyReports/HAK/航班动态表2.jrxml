@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航班动态表" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8230c5e4-3bae-4261-94bb-f7020d8274f8">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="615"/>
+	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows" value="true"/>
+	<queryString>
+		<![CDATA[select query.*, to_date(substr(?, 1, 8), 'yyyymmdd') as query_date
+from ((select distinct to_char(pa.pa_srta - 5/24, 'yyyy-mm-dd') as arr_date, to_char(pa.pa_idseq) as pa_idseq, pa.pa_flightnumber, rstca.rstc_description as arr_servicetype,
+       rfsa.rfst_code3l as arr_status, replace(replace(pa.pa_delayreasons,'[',''),']','') as pa_delayreasons, pa.pa_ract_aircrafttype, pa.pa_registration, pd.pd_rsta_stand as pa_rsta_stand,
+       rap_origin.rap_name3 as orig_airport, to_char(pa.pa_stotoutstation, 'hh24:mi') as stotout, to_char(pa.pa_srta, 'hh24:mi') as srta,
+       to_char(pa.pa_eldt, 'hh24:mi') as eldt, to_char(pa.pa_aldt, 'hh24:mi') as aldt, rap_prev.rap_name3 as prev_airport,
+       '' as arr_comment,pa.pa_rha_agentbag as arr_agent,
+       to_char(pd.pd_srtd - 5/24, 'yyyy-mm-dd') as dep_date, to_char(pd.pd_idseq) as pd_idseq, pd.pd_flightnumber, rstcd.rstc_description as dep_servicetype,
+       rfsd.rfst_code3l as dep_status, replace(replace(pd.pd_delayreasons,'[',''),']','') as pd_delayreasons, to_char(pd.pd_srtd, 'hh24:mi') as srtd, to_char(pd.pd_etot, 'hh24:mi') as etot,
+       to_char(pd.pd_asbt, 'hh24:mi') as asbt, rap_dest.rap_name3 as dest_airport, to_char(pd.pd_atot, 'hh24:mi') as atot,
+       rap_next.rap_name3 as next_airport, '' as dep_comment, pd.pd_rha_agentci as dep_agent,
+       (select to_char(wmsys.wm_concat(pdg.pdg_rgt_gate))
+        from pl_departuregate pdg
+        where pdg.pdg_pd_departure = pd.pd_idseq
+        and pdg.pdg_rmsc_scenario = 1
+        group by pdg.pdg_pd_departure) as dep_gate
+from pl_turn pt
+left join pl_arrival pa on pa.pa_idseq = pt.pt_pa_arrival
+left join pl_departure pd on pd.pd_idseq = pt.pt_pd_departure
+left join ref_servicetypecode rstca on rstca.rstc_code = pa.pa_rstc_servicetypecode
+left join ref_servicetypecode rstcd on rstcd.rstc_code = pd.pd_rstc_servicetypecode
+left join ref_flightstatus rfsa on rfsa.rfst_code = pa.pa_rfst_flightstatus
+left join ref_flightstatus rfsd on rfsd.rfst_code = pd.pd_rfst_flightstatus
+left join ref_airport rap_origin on rap_origin.rap_internalcode = pa.pa_rap_originairport
+left join ref_airport rap_prev on rap_prev.rap_internalcode = pa.pa_rap_previousairport
+left join ref_airport rap_dest on rap_dest.rap_internalcode = pd.pd_rap_destinationairport
+left join ref_airport rap_next on rap_next.rap_internalcode = pd.pd_rap_nextairport
+where to_char(pa.pa_srta - 5/24, 'yyyymmdd') = substr(?, 1, 8)
+and to_char(pd.pd_srtd - 5/24, 'yyyymmdd') = substr(?, 1, 8)
+and pd.pd_rmsc_scenario = 1
+and pa.pa_rmsc_scenario = 1)
+union (select '' as arr_date, '' as pa_idseq, '' as pa_flightnumber, '' as arr_servicetype,
+       '' as arr_status, '' as pa_delayreasons, pa.pa_ract_aircrafttype, pa.pa_registration, pd.pd_rsta_stand as pa_rsta_stand,
+       '' as orig_airport, '' as stotout, '' as srta,
+       '' as eldt, '' as aldt, '' as prev_airport,
+       '' as arr_comment, '' as arr_agent,
+       to_char(pd.pd_srtd - 5/24, 'yyyy-mm-dd') as dep_date, to_char(pd.pd_idseq) as pd_idseq, pd.pd_flightnumber, rstcd.rstc_description as dep_servicetype,
+       rfsd.rfst_code3l as dep_status, replace(replace(pd.pd_delayreasons,'[',''),']','') as pd_delayreasons, to_char(pd.pd_srtd, 'hh24:mi') as srtd, to_char(pd.pd_etot, 'hh24:mi') as etot,
+       to_char(pd.pd_asbt, 'hh24:mi') as asbt, rap_dest.rap_name3 as dest_airport, to_char(pd.pd_atot, 'hh24:mi') as atot,
+       rap_next.rap_name3 as next_airport, '' as dep_comment, pd.pd_rha_agentci as dep_agent,
+       (select to_char(wmsys.wm_concat(pdg.pdg_rgt_gate))
+        from pl_departuregate pdg
+        where pdg.pdg_pd_departure = pd.pd_idseq
+        and pdg.pdg_rmsc_scenario = 1
+        group by pdg.pdg_pd_departure) as dep_gate
+from pl_turn pt
+left join pl_arrival pa on pa.pa_idseq = pt.pt_pa_arrival
+left join pl_departure pd on pd.pd_idseq = pt.pt_pd_departure
+left join ref_servicetypecode rstca on rstca.rstc_code = pa.pa_rstc_servicetypecode
+left join ref_servicetypecode rstcd on rstcd.rstc_code = pd.pd_rstc_servicetypecode
+left join ref_flightstatus rfsa on rfsa.rfst_code = pa.pa_rfst_flightstatus
+left join ref_flightstatus rfsd on rfsd.rfst_code = pd.pd_rfst_flightstatus
+left join ref_airport rap_origin on rap_origin.rap_internalcode = pa.pa_rap_originairport
+left join ref_airport rap_prev on rap_prev.rap_internalcode = pa.pa_rap_previousairport
+left join ref_airport rap_dest on rap_dest.rap_internalcode = pd.pd_rap_destinationairport
+left join ref_airport rap_next on rap_next.rap_internalcode = pd.pd_rap_nextairport
+where ((to_char(pa.pa_srta - 5/24, 'yyyymmdd') <> substr(?, 1, 8)) or (pa.pa_srta is null))
+and to_char(pd.pd_srtd - 5/24, 'yyyymmdd') = substr(?, 1, 8)
+and pd.pd_rmsc_scenario = 1)
+union (select distinct to_char(pa.pa_srta - 5/24, 'yyyy-mm-dd') as arr_date, to_char(pa.pa_idseq) as pa_idseq, pa.pa_flightnumber, rstca.rstc_description as arr_servicetype,
+       rfsa.rfst_code3l as arr_status, replace(replace(pa.pa_delayreasons,'[',''),']','') as pa_delayreasons, pa.pa_ract_aircrafttype, pa.pa_registration, pa.pa_rsta_stand,
+       rap_origin.rap_name3 as orig_airport, to_char(pa.pa_stotoutstation, 'hh24:mi') as stotout, to_char(pa.pa_srta, 'hh24:mi') as srta,
+       to_char(pa.pa_eldt, 'hh24:mi') as eldt, to_char(pa.pa_aldt, 'hh24:mi') as aldt, rap_prev.rap_name3 as prev_airport,
+       '' as arr_comment, pa.pa_rha_agentbag as arr_agent,
+       '' as dep_date, '' as pd_idseq, '' as pd_flightnumber, '' as dep_servicetype,
+       '' as dep_status, '' as pd_delayreasons, '' as srtd, '' as etot,
+       '' as asbt, '' as dest_airport, '' as atot,
+       '' as next_airport, '' as dep_comment, '' as dep_agent,'' as dep_gate
+from pl_turn pt
+left join pl_arrival pa on pa.pa_idseq = pt.pt_pa_arrival
+left join pl_departure pd on pd.pd_idseq = pt.pt_pd_departure
+left join ref_servicetypecode rstca on rstca.rstc_code = pa.pa_rstc_servicetypecode
+left join ref_servicetypecode rstcd on rstcd.rstc_code = pd.pd_rstc_servicetypecode
+left join ref_flightstatus rfsa on rfsa.rfst_code = pa.pa_rfst_flightstatus
+left join ref_flightstatus rfsd on rfsd.rfst_code = pd.pd_rfst_flightstatus
+left join ref_airport rap_origin on rap_origin.rap_internalcode = pa.pa_rap_originairport
+left join ref_airport rap_prev on rap_prev.rap_internalcode = pa.pa_rap_previousairport
+left join ref_airport rap_dest on rap_dest.rap_internalcode = pd.pd_rap_destinationairport
+left join ref_airport rap_next on rap_next.rap_internalcode = pd.pd_rap_nextairport
+where (to_char(pa.pa_srta - 5/24, 'yyyymmdd') = substr(?, 1, 8))
+and ((to_char(pd.pd_srtd - 5/24, 'yyyymmdd') <> substr(?, 1, 8)) or (pd.pd_srtd is null))
+and pa.pa_rmsc_scenario = 1)
+) query
+order by atot, srtd, aldt, srta]]>
+	</queryString>
+	<field name="ARR_DATE" class="java.lang.String"/>
+	<field name="PA_IDSEQ" class="java.lang.String"/>
+	<field name="PA_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="ARR_SERVICETYPE" class="java.lang.String"/>
+	<field name="ARR_STATUS" class="java.lang.String"/>
+	<field name="PA_DELAYREASONS" class="java.lang.String"/>
+	<field name="PA_RACT_AIRCRAFTTYPE" class="java.lang.String"/>
+	<field name="PA_REGISTRATION" class="java.lang.String"/>
+	<field name="PA_RSTA_STAND" class="java.lang.String"/>
+	<field name="ORIG_AIRPORT" class="java.lang.String"/>
+	<field name="STOTOUT" class="java.lang.String"/>
+	<field name="SRTA" class="java.lang.String"/>
+	<field name="ELDT" class="java.lang.String"/>
+	<field name="ALDT" class="java.lang.String"/>
+	<field name="PREV_AIRPORT" class="java.lang.String"/>
+	<field name="ARR_COMMENT" class="java.lang.String"/>
+	<field name="ARR_AGENT" class="java.lang.String"/>
+	<field name="DEP_DATE" class="java.lang.String"/>
+	<field name="PD_IDSEQ" class="java.lang.String"/>
+	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="DEP_SERVICETYPE" class="java.lang.String"/>
+	<field name="DEP_STATUS" class="java.lang.String"/>
+	<field name="PD_DELAYREASONS" class="java.lang.String"/>
+	<field name="SRTD" class="java.lang.String"/>
+	<field name="ETOT" class="java.lang.String"/>
+	<field name="ASBT" class="java.lang.String"/>
+	<field name="DEST_AIRPORT" class="java.lang.String"/>
+	<field name="ATOT" class="java.lang.String"/>
+	<field name="NEXT_AIRPORT" class="java.lang.String"/>
+	<field name="DEP_COMMENT" class="java.lang.String"/>
+	<field name="DEP_AGENT" class="java.lang.String"/>
+	<field name="DEP_GATE" class="java.lang.String"/>
+	<field name="QUERY_DATE" class="java.util.Date"/>
+	<variable name="arr_num" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></variableExpression>
+	</variable>
+	<variable name="dep_num" class="java.lang.Integer" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></initialValueExpression>
+	</variable>
+	<variable name="total_flt" class="java.lang.Integer">
+		<variableExpression><![CDATA[$V{arr_num}+$V{dep_num}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="92" splitType="Stretch">
+			<staticText>
+				<reportElement x="10" y="0" width="786" height="32" uuid="ad884976-377f-4e80-93ad-23236055c0c5"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[美兰机场航班动态表]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="72" width="46" height="20" backcolor="#CCCCCC" uuid="4fb83564-0d1d-4646-8ca0-c36d4b39e458"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[航班号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="56" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="fbc6f6cb-8b05-461c-be25-dd3d5ea88261"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[类型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="83" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="fa29a5ff-8f87-414d-8cb7-f4a0b72b3548"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[状态]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="110" y="72" width="44" height="20" backcolor="#CCCCCC" uuid="78cedf39-e171-4222-9a03-8215de6580e2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[航班原因]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="154" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="f8b1db71-ff86-4c52-b4f9-0b8aef7ee606"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[机型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="181" y="72" width="38" height="20" backcolor="#CCCCCC" uuid="6151171c-9e15-49af-8ffa-f239f434d662"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[机号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="219" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="c6ec79ea-14bc-491f-bde1-649fde760f41"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[机位]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="246" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="b9c2993d-0aca-453d-81f6-26e357c21ae4"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[起站]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="273" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="b9fec5f0-7dd9-437c-895e-c54d0db35ac4"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[计起]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="300" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="bd83597b-2136-499e-8572-fcf429778638"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[计达]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="327" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="414d2496-1000-4f55-ad1b-08ede0983ec8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[预达]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="354" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="2a213a8e-667f-4d4a-a763-62f27dc6a7c0"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[实达]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="381" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="d67d153e-f3bc-43f6-916f-76356198897e"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[经停]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="408" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="83ce1d33-fa64-4245-bfce-a36f07e83507"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="435" y="72" width="46" height="20" backcolor="#CCCCCC" uuid="771206a5-ffab-44fc-ba99-ceaf77f9a22e"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[航班号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="481" y="72" width="29" height="20" backcolor="#CCCCCC" uuid="ceb6460f-faff-48f1-90da-f1d3194abe26"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[类型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="510" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="35c1271a-625d-47e6-bc4a-10bb3f376d20"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[状态]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="537" y="72" width="43" height="20" backcolor="#CCCCCC" uuid="1645598b-43f3-41c1-9270-53670c1ed9c6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[航班原因]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="607" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="7e912a73-0e72-4f02-b552-2691cb784c95"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[计起]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="634" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="0c483377-e851-4e97-9efe-42533659ebff"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[预起]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="661" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="d8c87ccf-29f0-4079-bd18-265a8fc62cba"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[登机]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="715" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="b23292f7-fa81-48b4-a219-ef87d56402dd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[实起]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="688" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="57410df5-c78b-4e9f-a266-8d850ac4149b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[经停]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="769" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="e3942c9e-ab6d-4697-98e0-89106ed04855"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[备注]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="742" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="dacad7aa-3147-46ff-9dd2-00e4b6450708"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[目的]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="580" y="72" width="27" height="20" backcolor="#CCCCCC" uuid="eb0055a4-e5b7-4690-bafe-5d5400721237"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[登机口]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="10" y="52" width="425" height="20" uuid="aadff8c8-bc12-4348-b009-d0cea39cbf6b"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["进港："+$V{arr_num}+"架次"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="435" y="52" width="361" height="20" uuid="91ce62e8-3e0b-4ff2-82de-e0f86cd155d0"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["离港："+$V{dep_num}+"架次 "]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="10" y="32" width="73" height="20" uuid="0f02fe65-1454-448e-be40-62927a8845c1"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["   航班日期："]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="327" y="32" width="469" height="20" uuid="6e8ea15b-3e21-4b7f-a4f4-acd5baeef673"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["进出港合计："+$V{total_flt}+"架次"]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd">
+				<reportElement x="83" y="32" width="244" height="20" uuid="9ba0cc23-88b3-4d18-84aa-af824f9698a5"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{QUERY_DATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="10" y="0" width="46" height="20" isPrintWhenDetailOverflows="true" uuid="198ac6b7-68cc-47bc-a70e-a9e1769457e4"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="56" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="d95be5a2-5bad-4574-8e25-caedc39a407d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARR_SERVICETYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="83" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="de02aa44-6436-481f-8bad-b2164f373e03"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARR_STATUS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="110" y="0" width="44" height="20" isPrintWhenDetailOverflows="true" uuid="95a01d60-044d-4562-85a0-7e19619dca58"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PA_DELAYREASONS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="154" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="ea450cb2-e796-4b5f-8d5f-9e84ef940177"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PA_RACT_AIRCRAFTTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="181" y="0" width="38" height="20" isPrintWhenDetailOverflows="true" uuid="2ab8a85e-b3e1-49a2-8a47-19ecf1bc7962"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PA_REGISTRATION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="219" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="47082889-71e3-43f5-93fc-e360ed5d50bd"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PA_RSTA_STAND}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="246" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="2c60465c-4450-401d-b250-c930f0374d45"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORIG_AIRPORT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="273" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="f04ee82c-2adf-4c8a-84b8-fff3e09d1ac6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STOTOUT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="300" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="e6361e55-fca5-4ea2-8698-1d2dac8289df"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SRTA}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="327" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="74e5e6dc-5d06-4cda-992b-72205ad38d8b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ELDT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="354" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="51b2d639-b140-4e8e-8997-4c57d17e6f5e"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALDT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="381" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="31e27ece-417c-4fe2-bc35-88fb46d4a3d8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PREV_AIRPORT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="408" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="826514dc-c9f3-4f39-b222-65a798e593fc"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ARR_COMMENT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="435" y="0" width="46" height="20" isPrintWhenDetailOverflows="true" uuid="9faede83-b17d-4179-99a0-bcce2314fac6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="481" y="0" width="29" height="20" isPrintWhenDetailOverflows="true" uuid="e0659c92-ec6a-42b3-8741-0e2c43a983fc"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_SERVICETYPE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="510" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="5c180646-9861-46a5-92de-6b07db89bbf6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_STATUS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="537" y="0" width="43" height="20" isPrintWhenDetailOverflows="true" uuid="955e637b-d9bc-4f80-83f2-3c6ec5ab65f2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PD_DELAYREASONS}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="607" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="3ff8cadc-beaf-4671-b546-7b341b23b175"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SRTD}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="634" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="9c0ff2f7-6153-4029-ad0b-8b297f62b2de"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ETOT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="661" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="f932e920-6a98-485c-9db0-ed4838da4da8"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ASBT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="715" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="83d4f481-df35-4514-973c-97fc1ac1047f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ATOT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="688" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="d6a492fa-eaf3-4d32-960f-94c951acccb7"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NEXT_AIRPORT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="769" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="940417be-7fb1-4fd5-885a-d71fcd0954bf"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_COMMENT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="742" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="7dedee29-f3c6-402b-af6b-32c8c1c51efe"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEST_AIRPORT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="580" y="0" width="27" height="20" isPrintWhenDetailOverflows="true" uuid="1edbda41-860c-4930-8fce-9bee47894eef"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_GATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="20" splitType="Stretch"/>
+	</summary>
+</jasperReport>
