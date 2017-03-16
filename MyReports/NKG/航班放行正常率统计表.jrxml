@@ -1,61 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-07-05T14:42:00 -->
+<!-- 2017-03-16T16:24:59 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 	<parameter name="startDateTime" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="endDateTime" class="java.util.Date" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select allf.pd_flightnumber,
-       allf.PD_RAP_NEXTAIRPORT,
+       allf.routing,
       allcnt,
-      delcnt,
-	  (allcnt-delcnt)/allcnt as rate
+      NVL(delcnttmp,0) as delcnt,
+	  (allcnt- NVL(delcnttmp,0))/allcnt as rate
        from(
 SELECT
         pd_flightnumber ,
-        PD_RAP_NEXTAIRPORT,
+        replace(substr(pt_routing,instr(pt_routing,'宁'),3),'-',TO_CHAR(pa_srta,'hh24mi')||'-'||TO_CHAR(pd_srtd,'hh24mi')) as routing,
 
         count(1) as allcnt
         FROM PL_DEPARTURE , pl_turn, pl_arrival
-       WHERE pt_pd_departure=pd_idseq
+       WHERE pt_pd_departure=pd_idseq(+)
        and pt_pa_arrival=pa_idseq(+)
          and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
-        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','H/Z','C/B','H/Y','L/W','H/G')
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
-		AND (
-                       TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24)
-             )
-         group by  pd_flightnumber,PD_RAP_NEXTAIRPORT
+         group by  pd_flightnumber,replace(substr(pt_routing,instr(pt_routing,'宁'),3),'-',TO_CHAR(pa_srta,'hh24mi')||'-'||TO_CHAR(pd_srtd,'hh24mi'))
          )allf
          left join
 (SELECT
         pd_flightnumber,
-        PD_RAP_NEXTAIRPORT,
-        count(1) as delcnt
-      FROM PL_DEPARTURE , pl_turn, pl_arrival
-       WHERE pt_pd_departure=pd_idseq
-       and pt_pa_arrival=pa_idseq(+)
+        replace(substr(pt_routing,instr(pt_routing,'宁'),3),'-',TO_CHAR(pa_srta,'hh24mi')||'-'||TO_CHAR(pd_srtd,'hh24mi')) as routing,
+        count(1) as delcnttmp
+        FROM PL_DEPARTURE , pl_turn, pl_arrival
+        WHERE pt_pd_departure=pd_idseq(+)
+        and pt_pa_arrival=pa_idseq(+)
         and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
-        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','H/Z','C/B','H/Y','L/W','H/G')
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
         AND (
-                       TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440 and pd_atot > pa_aldt +35/1440 +(pd_srtd-pa_srta)
+                       (TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440 and pd_atot > pa_aldt +35/1440 +(pd_srtd-pa_srta))
+                        OR (TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)  AND pd_atot>pd_srtd+25/1440)
              )
-         group by   pd_flightnumber,PD_RAP_NEXTAIRPORT)delf on allf.pd_flightnumber = delf.pd_flightnumber
-           where delcnt is not null
-           order by   allf.pd_flightnumber, rate]]>
+         group by   pd_flightnumber,replace(substr(pt_routing,instr(pt_routing,'宁'),3),'-',TO_CHAR(pa_srta,'hh24mi')||'-'||TO_CHAR(pd_srtd,'hh24mi')))delf on allf.pd_flightnumber = delf.pd_flightnumber and allf.routing = delf.routing 
+           order by   allf.pd_flightnumber]]>
 	</queryString>
 	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
-	<field name="PD_RAP_NEXTAIRPORT" class="java.lang.String"/>
+	<field name="ROUTING" class="java.lang.String"/>
 	<field name="ALLCNT" class="java.lang.Double"/>
 	<field name="DELCNT" class="java.lang.Double"/>
 	<field name="RATE" class="java.lang.Double"/>
 	<variable name="index" class="java.lang.Double" calculation="Count">
 		<variableExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sumAllCnt" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{ALLCNT}.doubleValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sumDelCnt" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{DELCNT}.doubleValue()]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sumNormalRate" class="java.lang.Double">
+		<variableExpression><![CDATA[($V{sumAllCnt}.doubleValue()-$V{sumDelCnt}.doubleValue())/$V{sumAllCnt}.doubleValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
 	</variable>
 	<background>
@@ -189,7 +198,7 @@ SELECT
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="180" y="0" width="100" height="20" uuid="9ea29407-42ca-4a90-8ec7-563387f2dc93">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -200,7 +209,7 @@ SELECT
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PD_RAP_NEXTAIRPORT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ROUTING}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="280" y="0" width="100" height="20" uuid="be54f1e9-fb44-4bad-80e7-989d2c82562d">
@@ -263,6 +272,54 @@ SELECT
 	<summary>
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="0" y="0" width="280" height="20" uuid="13a7124d-7004-45c6-a03c-16cf3d85d553">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[总计:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="280" y="0" width="100" height="20" uuid="f61803cf-0c9e-470a-965f-0690f79de47a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumAllCnt}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="100" height="20" uuid="0f6fe4d6-6c08-417d-ae35-722f581c2643">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumDelCnt}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement x="480" y="0" width="75" height="20" uuid="b8c77bcd-075d-470a-ac5e-1fc1be843a14">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumNormalRate}.doubleValue()]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>
