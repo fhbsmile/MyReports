@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-07-03T23:39:44 -->
+<!-- 2017-03-15T17:41:07 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="nkg_oracle"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 	<parameter name="startDateTime" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="endDateTime" class="java.util.Date" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[select * from (
-select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as parkingcnt from PL_DEPARTURE
-left join ref_standversion
-ON PL_DEPARTURE.PD_RSTA_REFSTAND = ref_standversion.RSV_RSTA_STAND
+		<![CDATA[select allcn.PD_RAL_AIRLINE as PD_RAL_AIRLINE, allcn.allcnt,NVL(parking.parkingcnt,0) as parkingcnt  from (
+select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as allcnt from PL_DEPARTURE
+left join REF_AIRCRAFTTYPE ON PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE = REF_AIRCRAFTTYPE.RACT_INTERNALCODE
+where PL_DEPARTURE.pd_atot between TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss')
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='H/Z'
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='U/Z'
+and REF_AIRCRAFTTYPE.RACT_SIZECATEGORY IN ('C','D','E','F')
+and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='190'
+and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='E90'
+and PL_DEPARTURE.PD_AOBT is not null
+and PL_DEPARTURE.PD_PD_MAINFLIGHT is null
+GROUP by PL_DEPARTURE.PD_RAL_AIRLINE) allcn
+left join 
+(select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as parkingcnt from PL_DEPARTURE
+left join ref_standversion ON PL_DEPARTURE.PD_RSTA_REFSTAND = ref_standversion.RSV_RSTA_STAND
+left join REF_AIRCRAFTTYPE ON PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE = REF_AIRCRAFTTYPE.RACT_INTERNALCODE
 where ref_standversion.rsv_standtype='CB'
 and PL_DEPARTURE.pd_atot between TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss')
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='H/Z'
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='U/Z'
+and REF_AIRCRAFTTYPE.RACT_SIZECATEGORY IN ('C','D','E','F')
+and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='190'
+and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='E90'
 and PL_DEPARTURE.PD_AOBT is not null
-GROUP by PL_DEPARTURE.PD_RAL_AIRLINE) parking
-left join 
-(select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as allcnt from PL_DEPARTURE
-where PL_DEPARTURE.pd_atot between TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss')
-and PL_DEPARTURE.PD_AOBT is not null
-GROUP by PL_DEPARTURE.PD_RAL_AIRLINE) allcn on parking.PD_RAL_AIRLINE = allcn.PD_RAL_AIRLINE]]>
+and PL_DEPARTURE.PD_PD_MAINFLIGHT is null
+GROUP by PL_DEPARTURE.PD_RAL_AIRLINE) parking on allcn.PD_RAL_AIRLINE = parking.PD_RAL_AIRLINE]]>
 	</queryString>
 	<field name="PD_RAL_AIRLINE" class="java.lang.String"/>
-	<field name="PARKINGCNT" class="java.lang.Double"/>
 	<field name="ALLCNT" class="java.lang.Double"/>
+	<field name="PARKINGCNT" class="java.lang.Double"/>
 	<variable name="sumParkingcnt" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{PARKINGCNT}.doubleValue()]]></variableExpression>
 		<initialValueExpression><![CDATA[0]]></initialValueExpression>
