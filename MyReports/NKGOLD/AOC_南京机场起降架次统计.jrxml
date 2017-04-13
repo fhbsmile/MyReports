@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2017-03-17T17:09:13 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_AircraftMovement" printOrder="Horizontal" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d6189e3d-5a2c-44d7-b930-f2dc1cc29247">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Crosstab Data Text" hTextAlign="Center" hImageAlign="Center"/>
+	<parameter name="staticDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select direction,directionTime,sum(directionMount) as directionMount from(
+select 'A' as direction,'00' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'01' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'02' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'03' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'04' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'05' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'06' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'07' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'08' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'09' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'10' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'11' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'12' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'13' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'14' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'15' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'16' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'17' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'18' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'19' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'20' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'21' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'22' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction,'23' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'00' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'01' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'02' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'03' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'04' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'05' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'06' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'07' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'08' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'09' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'10' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'11' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'12' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'13' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'14' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'15' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'16' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'17' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'18' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'19' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'20' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'21' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'22' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'D' as direction,'23' as directionTime,0 as directionMount from dual
+UNION ALL
+select 'A' as direction, TO_CHAR(A.PA_ALDT,'hh24') as directionTime,count(*) as directionMount
+from PL_ARRIVAL A  
+where TO_CHAR(A.PA_ALDT,'yyyy-mm-dd') =  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') and A.PA_RFST_FLIGHTSTATUS !='X' and A.PA_PA_MAINFLIGHT is null
+GROUP BY  'A',TO_CHAR(A.PA_ALDT,'hh24')
+UNION
+select 'D' as direction, TO_CHAR(D.PD_ATOT,'hh24') as directionTime,count(*) as directionMount
+from PL_DEPARTURE D  
+where TO_CHAR(D.PD_ATOT,'yyyy-mm-dd') =  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND D.PD_RFST_FLIGHTSTATUS !='X' and D.PD_PD_MAINFLIGHT is null
+GROUP BY  'D',TO_CHAR(D.PD_ATOT,'hh24') )group by  direction,directionTime order by direction,directionTime]]>
+	</queryString>
+	<field name="DIRECTION" class="java.lang.String"/>
+	<field name="DIRECTIONTIME" class="java.lang.String"/>
+	<field name="DIRECTIONMOUNT" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="80" splitType="Stretch">
+			<staticText>
+				<reportElement x="178" y="26" width="520" height="42" uuid="b9221cde-cc2b-4982-be78-2eee9e938a21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="20" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[南京机场起降架次统计]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="50">
+			<staticText>
+				<reportElement x="273" y="19" width="53" height="20" uuid="3d2d638b-3ddb-49fd-b7dc-6cc3e96e0964"/>
+				<textElement>
+					<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[统计日期:]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="326" y="19" width="100" height="20" uuid="e7f57b46-82d3-49c8-94f4-65afabdc06a4"/>
+				<textFieldExpression><![CDATA[$P{staticDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<summary>
+		<band height="400">
+			<barChart>
+				<chart renderType="draw" theme="default">
+					<reportElement isPrintRepeatedValues="false" x="31" y="16" width="741" height="272" uuid="976578b0-3eeb-409f-b9e2-824ca640afb1"/>
+					<chartTitle position="Top"/>
+					<chartSubtitle/>
+					<chartLegend position="Right"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{DIRECTION}.equals( "A" )?"到港":"离港"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{DIRECTIONTIME}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{DIRECTIONMOUNT}.intValue()]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="false">
+					<plot/>
+					<itemLabel/>
+					<categoryAxisLabelExpression><![CDATA["时间"]]></categoryAxisLabelExpression>
+					<categoryAxisFormat>
+						<axisFormat verticalTickLabels="true">
+							<labelFont>
+								<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+							</labelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisLabelExpression><![CDATA["数量"]]></valueAxisLabelExpression>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont>
+								<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+							</labelFont>
+						</axisFormat>
+					</valueAxisFormat>
+					<domainAxisMinValueExpression><![CDATA[1]]></domainAxisMinValueExpression>
+					<domainAxisMaxValueExpression><![CDATA[2]]></domainAxisMaxValueExpression>
+					<rangeAxisMinValueExpression><![CDATA[0]]></rangeAxisMinValueExpression>
+					<rangeAxisMaxValueExpression><![CDATA[40]]></rangeAxisMaxValueExpression>
+				</barPlot>
+			</barChart>
+			<crosstab ignoreWidth="false">
+				<reportElement x="118" y="302" width="654" height="98" uuid="d8faeebb-5470-493f-9dea-6030f7b0c799"/>
+				<crosstabHeaderCell>
+					<cellContents>
+						<staticText>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="30" uuid="6e0769e6-3923-41d5-92f2-f02bc308ba0a"/>
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement verticalAlignment="Middle">
+								<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+							</textElement>
+							<text><![CDATA[时间]]></text>
+						</staticText>
+					</cellContents>
+				</crosstabHeaderCell>
+				<rowGroup name="DIRECTION" width="70" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{DIRECTION}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="70" height="25" uuid="a961b031-cbed-40f8-819b-3111e4152be9"/>
+								<textFieldExpression><![CDATA[$V{DIRECTION}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="70" height="25" uuid="b73fac3b-ebd6-47bd-8a94-40c8527ff3f5"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+								</textElement>
+								<text><![CDATA[总计]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="DIRECTIONTIME" height="30" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{DIRECTIONTIME}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents backcolor="#F0F8FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<textField>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="20" height="30" uuid="2e4d6b73-c628-4e94-ab9d-d2f91568b7ab"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$V{DIRECTIONTIME}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents backcolor="#BFE1FF" mode="Opaque">
+							<box>
+								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+							<staticText>
+								<reportElement x="0" y="0" width="50" height="30" uuid="b0b83cd3-2b5c-4946-9c93-3457f97253c0"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="SansSerif" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+								</textElement>
+								<text><![CDATA[合计]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="DIRECTIONMOUNTMeasure" class="java.math.BigDecimal" calculation="Sum">
+					<measureExpression><![CDATA[$F{DIRECTIONMOUNT}]]></measureExpression>
+				</measure>
+				<crosstabCell width="20" height="25">
+					<cellContents>
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="20" height="25" uuid="528561d6-de29-4b43-ab20-6ff72d900244"/>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$V{DIRECTIONMOUNTMeasure}.intValue()]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="20" height="25" rowTotalGroup="DIRECTION">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="20" height="25" uuid="50321ea8-5f67-4d2d-8a06-6d1526ea1a30"/>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$V{DIRECTIONMOUNTMeasure}.intValue()]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="25" columnTotalGroup="DIRECTIONTIME">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="1a90bd3b-1a6c-4839-8aa8-07b668779dc5"/>
+							<textFieldExpression><![CDATA[$V{DIRECTIONMOUNTMeasure}.intValue()]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="50" height="25" rowTotalGroup="DIRECTION" columnTotalGroup="DIRECTIONTIME">
+					<cellContents backcolor="#BFE1FF" mode="Opaque">
+						<box>
+							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+						</box>
+						<textField>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="0c3228c9-3d1a-4af5-85aa-abd755a231c1"/>
+							<textFieldExpression><![CDATA[$V{DIRECTIONMOUNTMeasure}.intValue()]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>

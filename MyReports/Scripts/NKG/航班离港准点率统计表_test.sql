@@ -13,7 +13,7 @@ SELECT
         and pt_pa_arrival=pa_idseq(+)
         and PL_DEPARTURE.pd_idseq= prt_pd_departure
         and PL_DEPARTURE.pd_RAP_NEXTAIRPORT=prt_rap_Airport
-         and pl_departure.pd_SRTD BETWEEN  to_date('2017-03-06 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2017-03-09 00:00:00','yyyy-mm-dd hh24:mi:ss')
+         and pl_departure.pd_SRTD BETWEEN  to_date('2017-03-21 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2017-03-24 00:00:00','yyyy-mm-dd hh24:mi:ss')
         AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
@@ -29,13 +29,10 @@ SELECT
        and pt_pa_arrival=pa_idseq(+)
        and PL_DEPARTURE.pd_idseq= prt_pd_departure
        and PL_DEPARTURE.pd_RAP_NEXTAIRPORT=prt_rap_Airport
-        and pl_departure.pd_SRTD BETWEEN  to_date('2017-03-06 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2017-03-09 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        and pl_departure.pd_SRTD BETWEEN  to_date('2017-03-21 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2017-03-24 00:00:00','yyyy-mm-dd hh24:mi:ss')
         AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
-        AND (
-                       (TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440 and pd_atot > pa_aldt +35/1440 +(pd_srtd-pa_srta))
-                        OR (TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)  AND pd_atot>pd_srtd+25/1440)
-             )
+        AND pd_atot>pd_SRTD+25/144
          group by   pd_flightnumber,replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi')))delf on allf.pd_flightnumber = delf.pd_flightnumber and allf.routing = delf.routing 
            order by   allf.pd_flightnumber;

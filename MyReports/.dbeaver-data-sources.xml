@@ -18,4 +18,21 @@
 			</network-handler>
 		</connection>
 	</data-source>
+	<data-source id="oracle_thin-15b13da2c3e-52109521c1806b8b" provider="oracle" driver="oracle_thin" name="Oracle - AOSCN_VM" save-password="true" show-system-objects="true" read-only="true">
+		<connection host="192.168.56.5" port="1521" server="" database="aodb" url="jdbc:oracle:thin:@//192.168.56.5:1521/aodb" user="hak_prd" password="GwUNH0BMQBQ6HRQ/FBpANsc=" type="dev">
+			<provider-property name="@dbeaver-sid-service@" value="SERVICE"/>
+			<provider-property name="@dbeaver-use-rule-hint@" value="false"/>
+			<provider-property name="@dbeaver-connection-type@" value="BASIC"/>
+			<provider-property name="@dbeaver-check-schema-content@" value="true"/>
+			<provider-property name="@dbeaver-always-show-dba@" value="false"/>
+			<network-handler type="PROXY" id="socks_proxy" enabled="false" save-password="false">
+				<property name="socks-port" value="1080"/>
+			</network-handler>
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" save-password="false">
+				<property name="sshConnectTimeout" value="10000"/>
+				<property name="port" value="22"/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+	</data-source>
 </data-sources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-21T15:31:06 -->
+<!-- 2017-03-24T09:25:06 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
@@ -42,10 +42,7 @@ SELECT
         AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
-        AND (
-                       (TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440 and pd_atot > pa_aldt +35/1440 +(pd_srtd-pa_srta))
-                        OR (TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)  AND pd_atot>pd_srtd+25/1440)
-             )
+        AND pd_atot>pd_SRTD+25/144
          group by   pd_flightnumber,replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi')))delf on allf.pd_flightnumber = delf.pd_flightnumber and allf.routing = delf.routing 
            order by   allf.pd_flightnumber]]>
 	</queryString>
@@ -80,7 +77,7 @@ SELECT
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Top"/>
-				<text><![CDATA[经停航班放行正常率统计表]]></text>
+				<text><![CDATA[航班离港准点率统计表]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="80" y="78" width="100" height="20" uuid="32763c18-db19-4964-b571-a7dbe2ac5d41">
@@ -181,7 +178,7 @@ SELECT
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[正常率]]></text>
+				<text><![CDATA[准点率]]></text>
 			</staticText>
 		</band>
 	</title>

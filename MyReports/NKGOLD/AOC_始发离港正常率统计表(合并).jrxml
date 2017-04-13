@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-24T08:48:48 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-04-01T22:07:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tenMaxAbnormalRateFlight" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fdd2c308-88d4-4465-8ac5-f28a0e5483eb">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="117"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="877"/>
 	<parameter name="startDate" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="endDate" class="java.util.Date" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select allf.pd_flightnumber,
-       allf.routing,
        allf.pd_ral_airline,
       allcnt,
       NVL(delcnttmp,0) as delcnt,
@@ -19,14 +20,11 @@
        from(
 SELECT
         pd_flightnumber ,
-        replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi')) as routing,
 		    pd_ral_airline,
         count(1) as allcnt
-        FROM PL_DEPARTURE , pl_turn, pl_arrival,pl_routing
+        FROM PL_DEPARTURE , pl_turn, pl_arrival
         WHERE pt_pd_departure=pd_idseq(+)
         and pt_pa_arrival=pa_idseq(+)
-        and PL_DEPARTURE.pd_idseq= prt_pd_departure
-       and PL_DEPARTURE.pd_RAP_NEXTAIRPORT=prt_rap_Airport
         and (TO_CHAR(pl_departure.pd_SRTD- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
         AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
@@ -34,18 +32,15 @@ SELECT
 		AND (
                        TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)
              )
-         group by  pd_ral_airline, pd_flightnumber,replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi'))
+         group by  pd_ral_airline, pd_flightnumber
          )allf
          left join
 (SELECT
         pd_flightnumber,
-        replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi')) as routing,
        count(1) as delcnttmp
-       FROM PL_DEPARTURE , pl_turn, pl_arrival,pl_routing
+       FROM PL_DEPARTURE , pl_turn, pl_arrival
        WHERE pt_pd_departure=pd_idseq(+)
        and pt_pa_arrival=pa_idseq(+)
-       and PL_DEPARTURE.pd_idseq= prt_pd_departure
-       and PL_DEPARTURE.pd_RAP_NEXTAIRPORT=prt_rap_Airport
         and (TO_CHAR(pl_departure.pd_SRTD- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd'))
         AND PL_DEPARTURE.pd_rstc_servicetypecode     IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
@@ -53,11 +48,10 @@ SELECT
         AND (
                        TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440
              )
-         group by   pd_flightnumber, replace(substr(pt_routing,instr(pt_routing,'宁'),10),'宁-','宁'||TO_CHAR(pd_srtd,'hh24mi')||'-'||TO_CHAR(prt_stastation,'hh24mi')))delf on allf.pd_flightnumber = delf.pd_flightnumber and allf.routing = delf.routing
+         group by   pd_flightnumber)delf on allf.pd_flightnumber = delf.pd_flightnumber
            order by   allf.pd_ral_airline, allf.pd_flightnumber]]>
 	</queryString>
 	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
-	<field name="ROUTING" class="java.lang.String"/>
 	<field name="PD_RAL_AIRLINE" class="java.lang.String"/>
 	<field name="ALLCNT" class="java.lang.Double"/>
 	<field name="DELCNT" class="java.lang.Double"/>
@@ -124,7 +118,7 @@ SELECT
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement x="27" y="0" width="60" height="20" uuid="18d26694-5bad-48e6-bba0-1e51a58b6547"/>
+				<reportElement x="140" y="0" width="60" height="20" uuid="18d26694-5bad-48e6-bba0-1e51a58b6547"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -138,7 +132,7 @@ SELECT
 				<text><![CDATA[排名]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="87" y="0" width="60" height="20" uuid="ce24c8e0-5999-4aef-9736-8a268abe215d"/>
+				<reportElement x="200" y="0" width="60" height="20" uuid="ce24c8e0-5999-4aef-9736-8a268abe215d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -150,20 +144,6 @@ SELECT
 					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[航班号]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="147" y="0" width="113" height="20" uuid="9b331638-9ed9-4e67-8c3a-ffb293b3ff32"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[航线]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="260" y="0" width="48" height="20" uuid="2fa6223f-b0a6-4ef9-a87c-afb00a0b30c3"/>
@@ -226,7 +206,7 @@ SELECT
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="27" y="0" width="60" height="20" uuid="46b35bbc-af92-4f41-a09e-bf99549ce3af"/>
+				<reportElement x="140" y="0" width="60" height="20" uuid="46b35bbc-af92-4f41-a09e-bf99549ce3af"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -238,7 +218,7 @@ SELECT
 				<textFieldExpression><![CDATA[$V{index}.intValue()]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="87" y="0" width="60" height="20" uuid="526d9207-4d73-441d-a97c-563ccb1f173d"/>
+				<reportElement x="200" y="0" width="60" height="20" uuid="526d9207-4d73-441d-a97c-563ccb1f173d"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -248,18 +228,6 @@ SELECT
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="147" y="0" width="113" height="20" uuid="d7b9ee61-3179-4f07-ad40-57fcf0801ca0"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{ROUTING}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="260" y="0" width="48" height="20" uuid="aa5c33f2-504d-4f3a-b137-d6e59036d168"/>
@@ -314,7 +282,7 @@ SELECT
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="27" y="0" width="233" height="20" uuid="20aae9b5-5ffd-4816-b60c-2a4585691866">
+				<reportElement x="140" y="0" width="120" height="20" uuid="20aae9b5-5ffd-4816-b60c-2a4585691866">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">

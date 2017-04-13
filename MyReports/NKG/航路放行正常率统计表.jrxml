@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-04-01T21:16:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="航空公司靠桥率统计表" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="122"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="867"/>
+	<parameter name="startDateTime" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="endDateTime" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select inallxx.RAP_FEderalstate,NVL(inallcntt,0) as inallcnt,NVL(indelcntt,0) as indelcnt,NVL(allcntt,0) as allcnt from (
+   select  'link' as linkxx,  RAP_FEderalstate,count(1) as inallcntt
+   from PL_DEPARTURE,pl_arrival, pl_turn,ref_airport
+   where pt_pd_departure=pd_idseq(+)
+    and pt_pa_arrival=pa_idseq(+)
+   And PD_RAP_NEXTAIRPORT=RAP_INTERNALCODE(+)
+    and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
+    AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+    AND pd_atot is not null
+    AND pa_aldt is not null
+    group by  RAP_FEderalstate) inallxx        
+ left join (        
+   select    RAP_FEderalstate,count(1) as indelcntt
+   from PL_DEPARTURE ,pl_arrival, pl_turn,ref_airport
+   where pt_pd_departure=pd_idseq(+)
+    and pt_pa_arrival=pa_idseq(+)
+   And PD_RAP_NEXTAIRPORT=RAP_INTERNALCODE(+)
+    and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+        AND pd_atot is not null
+        AND pa_aldt is not null
+        AND (
+                       (TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) AND pd_atot>pd_srtd +25/1440 and pd_atot > pa_aldt +35/1440 +(pd_srtd-pa_srta))
+                        OR (TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)  AND pd_atot>pd_srtd+25/1440)
+             ) group by    RAP_FEderalstate ) indelxx on inallxx.RAP_FEderalstate = indelxx.RAP_FEderalstate
+             
+   left join (
+    select 'link' as alink,  count(1) as allcntt
+   from PL_DEPARTURE,pl_arrival, pl_turn
+   where pt_pd_departure=pd_idseq(+)
+    and pt_pa_arrival=pa_idseq(+)
+    and pl_departure.pd_SRTD BETWEEN  to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')
+    AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+    AND pd_atot is not null
+    AND pa_aldt is not null
+   ) allxx on allxx.alink= inallxx.linkxx]]>
+	</queryString>
+	<field name="RAP_FEDERALSTATE" class="java.lang.String"/>
+	<field name="INALLCNT" class="java.lang.Double"/>
+	<field name="INDELCNT" class="java.lang.Double"/>
+	<field name="ALLCNT" class="java.lang.Double"/>
+	<variable name="sumall" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INALLCNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="sundelall" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{INDELCNT}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="98" splitType="Stretch">
+			<staticText>
+				<reportElement x="180" y="10" width="200" height="20" uuid="d83a6e0c-7d08-4110-99a0-acd3e36b059e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[航路放行正常率统计表]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="78" width="100" height="20" uuid="32763c18-db19-4964-b571-a7dbe2ac5d41">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[总班次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="78" width="100" height="20" uuid="dabac4da-c4d0-48d6-9567-2b3a56a04f2b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[正常班次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="78" width="100" height="20" uuid="2640debb-b19f-4aaf-baf5-cef26b5bfe4b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[延误班次]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="78" width="100" height="20" uuid="efc8e85f-c61d-4cbe-835f-7cad4f9e0066">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[放行正常率]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="51" width="100" height="20" uuid="23671534-49ad-439e-ad10-5a75cb4eb6c7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[统计区间：]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="280" y="51" width="100" height="20" uuid="8a009dea-d8d1-429f-a644-99b66e8d458f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{startDateTime}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="380" y="51" width="100" height="20" uuid="c07d02d7-b242-449e-8c16-0dc5eacc0fd1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
+				<textFieldExpression><![CDATA[$P{endDateTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="78" width="80" height="20" uuid="16f07336-c4bc-4e1e-9a14-b5ea213d7984">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[航路]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="78" width="75" height="20" uuid="16ed3d94-fdf3-4ddb-b0b5-553b3331c8e9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[航班量占比]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="100" height="20" uuid="40f4a608-1c8f-44c3-b7ac-8354372c6360">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INALLCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="100" height="20" uuid="9ea29407-42ca-4a90-8ec7-563387f2dc93">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INALLCNT}.intValue()-$F{INDELCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="280" y="0" width="100" height="20" uuid="be54f1e9-fb44-4bad-80e7-989d2c82562d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INDELCNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="100" height="20" uuid="d2ff76dd-dca7-4561-96c5-90f87cebbd7e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[($F{INALLCNT}.doubleValue()-$F{INDELCNT}.doubleValue())/$F{INALLCNT}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="80" height="20" uuid="8fc4016c-6020-4652-a1e2-474b831bcc21">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RAP_FEDERALSTATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="480" y="0" width="75" height="20" uuid="8b14365d-038d-4aeb-9451-fc26b57049b7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INALLCNT}.doubleValue()/$F{ALLCNT}.doubleValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="20" uuid="7c2ae493-8f7f-411b-ba0c-4078c4676d1a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[合计]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="80" y="0" width="100" height="20" uuid="e7a8d9b3-18cc-4fe5-8b6b-25130761c5a8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumall}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="0" width="100" height="20" uuid="c5088bda-b33a-4111-b4ff-80ae068ab50e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumall}.intValue()-$V{sundelall}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="280" y="0" width="100" height="20" uuid="12c526d0-1ff5-4841-979c-ea04d31a7fe0">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sundelall}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="100" height="20" uuid="d8b14259-c9e2-487c-a614-a117917ab0dc">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[($V{sumall}.intValue()-$V{sundelall}.intValue())/$V{sumall}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##%" isBlankWhenNull="true">
+				<reportElement x="480" y="0" width="75" height="20" uuid="367ad8db-621c-470e-8c15-4146f8e8abb4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{sumall}.doubleValue()/$F{ALLCNT}.doubleValue()]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
