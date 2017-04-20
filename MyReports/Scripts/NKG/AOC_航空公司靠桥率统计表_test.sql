@@ -1,9 +1,8 @@
 select allcn.PD_RAL_AIRLINE as PD_RAL_AIRLINE, allcn.allcnt,NVL(parking.parkingcnt,0) as parkingcnt  from (
 select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as allcnt from PL_DEPARTURE
 left join REF_AIRCRAFTTYPE ON PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE = REF_AIRCRAFTTYPE.RACT_INTERNALCODE
-where PL_DEPARTURE.pd_atot between TO_DATE('2016-12-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE('2016-12-02 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
-and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='H/Z'
-and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='U/Z'
+where PL_DEPARTURE.pd_atot between TO_DATE('2017-04-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE('2017-04-02 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE in ('W/Z','C/B','L/W','Z/P','Q/B')
 and REF_AIRCRAFTTYPE.RACT_SIZECATEGORY IN ('C','D','E','F')
 and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='190'
 and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='E90'
@@ -12,12 +11,12 @@ and PL_DEPARTURE.PD_PD_MAINFLIGHT is null
 GROUP by PL_DEPARTURE.PD_RAL_AIRLINE) allcn
 left join 
 (select PL_DEPARTURE.PD_RAL_AIRLINE,count(*) as parkingcnt from PL_DEPARTURE
-left join ref_standversion ON PL_DEPARTURE.PD_RSTA_REFSTAND = ref_standversion.RSV_RSTA_STAND
+left join ref_stand on PL_DEPARTURE.PD_RSTA_REFSTAND=ref_stand.RSTA_IDCODE
+left join ref_standversion ON ref_stand.RSTA_IDCODE = ref_standversion.RSV_RSTA_STAND
 left join REF_AIRCRAFTTYPE ON PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE = REF_AIRCRAFTTYPE.RACT_INTERNALCODE
 where ref_standversion.rsv_standtype='CB'
-and PL_DEPARTURE.pd_atot between TO_DATE('2016-12-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE('2016-12-02 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
-and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='H/Z'
-and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE !='U/Z'
+and PL_DEPARTURE.pd_atot between TO_DATE('2017-04-01 00:00:00', 'yyyy-mm-dd hh24:mi:ss') AND  TO_DATE('2017-04-02 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+and PL_DEPARTURE.PD_RSTC_SERVICETYPECODE in ('W/Z','C/B','L/W','Z/P','Q/B')
 and REF_AIRCRAFTTYPE.RACT_SIZECATEGORY IN ('C','D','E','F')
 and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='190'
 and PL_DEPARTURE.PD_RACT_AIRCRAFTTYPE !='E90'
