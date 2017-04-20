@@ -26,5 +26,5 @@ SELECT
         AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
         AND pd_atot is not null
         AND pa_aldt is not null
-        AND pd_atot>pd_SRTD+25/144
+        AND pd_atot>pd_SRTD+25/1440
          group by   pd_flightnumber)delf on allf.pd_flightnumber = delf.pd_flightnumber order by allf.pd_flightnumber
