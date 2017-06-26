@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-06-26T17:56:25 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_DailyStandChangeOnlyA" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8f40dbec-6701-4fe1-b161-0e1fbffd8fa1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adapter\DataAdapterNKG_PRD.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="283"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="710"/>
+	<parameter name="statisticDate" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[select * from (
+(select Sat_idseq,pd_idseq as flightId,TO_CHAR(sat_createtime,'yyyy-mm-dd hh24:mi:ss') as sat_createtime,sat_moduser,SUBSTR(sat_oldvalue,2) as oldvalue,SUBSTR(sat_newvalue,2) as newvalue,'D' as direction ,pd_flightNumber as flightNumber,TO_CHAR(pd_srtd,'yyyy-mm-dd hh24:mi') as schedualTime
+from sy_audittrail, pl_departure
+where
+  (TO_CHAR(pd_srtd,'yyyy-mm-dd') between to_char(to_date('2017-06-24 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') and to_char(to_date('2017-06-25 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')) 
+  and Pd_RFST_FLIGHTSTATUS !='X' 
+   and Pd_pd_mainflight is null 
+   and SAT_MASTERKEY=to_CHAR(pd_idseq) 
+   and SAT_MASTERTABLE='PL_DEPARTURE' 
+   and sat_changecode ='PD_RSTA_STAND.UPDATE' ))
+order by direction,schedualTime,flightNumber,sat_idseq]]>
+	</queryString>
+	<field name="SAT_IDSEQ" class="java.math.BigDecimal"/>
+	<field name="FLIGHTID" class="java.math.BigDecimal"/>
+	<field name="SAT_CREATETIME" class="java.lang.String"/>
+	<field name="SAT_MODUSER" class="java.lang.String"/>
+	<field name="OLDVALUE" class="java.lang.String"/>
+	<field name="NEWVALUE" class="java.lang.String"/>
+	<field name="DIRECTION" class="java.lang.String"/>
+	<field name="FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="SCHEDUALTIME" class="java.lang.String"/>
+	<variable name="index" class="java.lang.Integer" incrementType="Group" incrementGroup="flightId" calculation="Count">
+		<variableExpression><![CDATA[$F{FLIGHTID}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
+	<variable name="groupCnt" class="java.lang.Integer" resetType="Group" resetGroup="flightId" calculation="Count">
+		<variableExpression><![CDATA[$F{NEWVALUE}]]></variableExpression>
+	</variable>
+	<group name="flightId" keepTogether="true">
+		<groupExpression><![CDATA[$F{FLIGHTID}]]></groupExpression>
+		<groupFooter>
+			<band height="20">
+				<staticText>
+					<reportElement mode="Opaque" x="354" y="0" width="50" height="20" backcolor="#CCCCFF" uuid="bbd291d7-4e7c-4bd1-8ae6-806d6e78c21e"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					</textElement>
+					<text><![CDATA[变更次数:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="69" y="0" width="65" height="20" backcolor="#CCCCFF" uuid="283609f2-e22b-445c-b34b-80713cbcbce0"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{index}.intValue()]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="134" y="0" width="80" height="20" backcolor="#CCCCFF" uuid="dc5b3de9-0ef4-4fd8-aaf2-1bc3755ab047"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{FLIGHTNUMBER}]]></textFieldExpression>
+				</textField>
+				<textField pattern="yyyy-MM-dd HHmm" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="214" y="0" width="90" height="20" backcolor="#CCCCFF" uuid="959bdf99-de17-41ba-b9d4-07b79926232f"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{SCHEDUALTIME}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="404" y="0" width="100" height="20" backcolor="#CCCCFF" uuid="ec209f52-36a5-4fb0-aabc-62507adf4e4d"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$V{groupCnt}.intValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="304" y="0" width="50" height="20" backcolor="#CCCCFF" uuid="63090399-d457-42c1-9cb4-1ad0c97e53a3"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="132" y="11" width="294" height="35" uuid="5c44aca4-a1f6-4a6f-bdfe-3d2ddeb928bb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[每日机位更改数量统计表]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="59" width="54" height="20" uuid="b56bd7b1-7132-4b37-9075-398a138ab163"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[统计日期:]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="425" y="59" width="88" height="20" uuid="e35271ab-76bf-462f-a734-29faf8956fbd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{statisticDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<staticText>
+				<reportElement x="69" y="0" width="65" height="30" uuid="7f565323-afbf-4e98-b89e-44152ce21852"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[编号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="134" y="0" width="80" height="30" uuid="09e358fe-d294-4275-93ac-48ead16a7239"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="214" y="0" width="90" height="30" uuid="4ad474b9-8f70-4369-b6fa-597d4dcee499"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班计划时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="0" width="50" height="30" uuid="4fe12dc4-e3b7-4c3b-ad9e-b1eb39460a1a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[当前机位]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="0" width="50" height="30" uuid="d36d7316-3648-444e-904a-6e33f8f1d260"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[目标机位]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="0" width="100" height="30" uuid="5dffe608-3a4b-4a44-b62d-00f9417640d9"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[变更时间]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="69" y="0" width="65" height="20" uuid="8039c43f-5d02-487a-a633-29b86ce65c30"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="0" width="80" height="20" uuid="aeba108b-c974-4a1f-aae6-375030d691d2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="214" y="0" width="90" height="20" uuid="0a4e4bdd-828f-41a0-bfa8-9ca52bb1919e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="304" y="0" width="50" height="20" uuid="9325766f-4ba0-4731-8470-4eb13d7dc0c7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OLDVALUE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="0" width="50" height="20" uuid="0e04a028-5fc5-4b85-bd41-e8f3f2128ce0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{NEWVALUE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm:ss" isBlankWhenNull="true">
+				<reportElement x="404" y="0" width="100" height="20" uuid="0a96acc0-801a-48e3-92f8-f8bc0e8d8df2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SAT_CREATETIME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement x="484" y="10" width="27" height="20" uuid="806aeade-0641-4050-8d94-1f674bedff0a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Page">
+				<reportElement x="431" y="10" width="54" height="20" uuid="1eeaf9b1-3a5c-4ff3-8d1b-419226c13901"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

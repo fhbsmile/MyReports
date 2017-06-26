@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl"><name>NKG_AODB_PRD</name><driver>oracle.jdbc.driver.OracleDriver</driver><username>nkg_aodb_prd</username><password>s7w3rd8Dgf</password><savePassword>true</savePassword><url>jdbc:oracle:thin:@172.17.0.16:1521:aodb</url><database></database><serverAddress></serverAddress><classpath>D:\Work_Program\sqldeveloper4.1.5\jdbc\lib\ojdbc7.jar</classpath></jdbcDataAdapter>
