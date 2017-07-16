@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-07-16T15:39:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_release_atot_flight" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="520c8eab-1f71-415c-a626-4218deab4f81">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<queryString>
+		<![CDATA[ SELECT  pd_idseq,
+        pa_flightnumber,
+        pd_flightnumber,
+        pd_ract_aircrafttype,
+        pa_srta,
+        pd_srtd,
+        floor((pd_srtd-pa_srta)*1440) as sttt,
+        pt_mttt,
+        pa_aldt,
+        pa_aldt+35/1440+(pd_srtd-pa_srta) as normalTakeoffTime,
+        pd_atot,
+        floor((pd_atot-greatest(pa_aldt+35/1440+(pd_srtd-pa_srta),pd_srtd+25/1440))*1440) as delayTime
+       FROM PL_DEPARTURE , pl_turn, pl_arrival
+       WHERE pt_pd_departure=pd_idseq
+       AND pt_pa_arrival=pa_idseq(+)
+        AND pl_departure.pd_SRTD between  to_date(?,'yyyy-mm-dd hh24:mi:ss') and to_date(?,'yyyy-mm-dd hh24:mi:ss')
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+        AND PL_DEPARTURE.pd_atot is not null
+        AND pl_arrival.pa_aldt is not null
+        AND TRUNC(PD_SRTD-6/24) = TRUNC(PA_SRTA-6/24) 
+        AND  pd_atot > pd_srtd +25/1440 
+        AND pd_atot>pa_aldt+(pd_srtd-pa_srta) +35/1440
+        AND  floor((pd_atot-greatest(pa_aldt+35/1440+(pd_srtd-pa_srta),pd_srtd+25/1440))*1440) > ?
+        AND floor((pd_atot-greatest(pa_aldt+35/1440+(pd_srtd-pa_srta),pd_srtd+25/1440))*1440) <?
+union
+ SELECT  pd_idseq,
+        pa_flightnumber,
+        pd_flightnumber,
+        pd_ract_aircrafttype,
+        pa_srta,
+        pd_srtd,
+        floor((pd_srtd-pa_srta)*1440) as sttt,
+        pt_mttt,
+        pa_aldt,
+        pa_aldt+35/1440+(pd_srtd-pa_srta) as normalTakeoffTime,
+        pd_atot,
+        floor((pd_atot-pd_srtd-25/1440)*1440) as delayTime
+       FROM PL_DEPARTURE , pl_turn, pl_arrival
+       WHERE pt_pd_departure=pd_idseq
+       AND pt_pa_arrival=pa_idseq(+)
+        AND pl_departure.pd_SRTD between  to_date(?,'yyyy-mm-dd hh24:mi:ss') and to_date(?,'yyyy-mm-dd hh24:mi:ss')
+        AND PL_DEPARTURE.pd_rstc_servicetypecode    IN ('W/Z','C/B','L/W')
+        AND PL_DEPARTURE.pd_atot is not null
+        AND pl_arrival.pa_aldt is not null
+        AND TRUNC(PD_SRTD-6/24) != TRUNC(PA_SRTA-6/24)  
+        AND pd_atot>pd_srtd+25/1440
+        AND floor((pd_atot-pd_srtd-25/1440)*1440) >?
+        AND floor((pd_atot-pd_srtd-25/1440)*1440) <?]]>
+	</queryString>
+	<field name="PD_IDSEQ" class="java.lang.Double"/>
+	<field name="PA_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_FLIGHTNUMBER" class="java.lang.String"/>
+	<field name="PD_RACT_AIRCRAFTTYPE" class="java.lang.String"/>
+	<field name="PA_SRTA" class="java.sql.Timestamp"/>
+	<field name="PD_SRTD" class="java.sql.Timestamp"/>
+	<field name="STTT" class="java.lang.Double"/>
+	<field name="PT_MTTT" class="java.lang.Double"/>
+	<field name="PA_ALDT" class="java.sql.Timestamp"/>
+	<field name="NORMALTAKEOFFTIME" class="java.sql.Timestamp"/>
+	<field name="PD_ATOT" class="java.sql.Timestamp"/>
+	<field name="DELAYTIME" class="java.lang.Double"/>
+	<variable name="index" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Integer(0)]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="219" y="17" width="311" height="40" uuid="fbd286c7-1ac2-4948-b82c-4610b81f6d80"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="20" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[放行延误时间查询表]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="350" y="0" width="90" height="25" uuid="e6d864f3-43ea-4d50-a4df-67d0acabc24e">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[SRTD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="90" height="25" uuid="c8af5e79-bc21-444d-b9bc-e2ca9e25e7d5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ALDT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="530" y="0" width="51" height="25" uuid="29b568eb-ff2c-4e63-bc1c-923bf2e1c9b0"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[STTT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="0" width="40" height="25" uuid="59aeded1-d263-4405-ad9f-e05a44ddf75d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[编号]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="158" y="0" width="51" height="25" uuid="4233cf4f-fbe5-4718-a35b-069f407910f2"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班号D]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="628" y="0" width="90" height="25" uuid="f44ae706-8a58-4677-a97a-c493471e6e11"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ATOT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="718" y="0" width="59" height="25" uuid="97daa1d0-2c58-4e3a-9868-889168ac5520"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[延误时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="0" width="90" height="25" uuid="cebff5b9-3dcb-4f8b-96be-50232bde9bf5"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[SRTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="209" y="0" width="51" height="25" uuid="b1eea793-2c4f-4202-b813-f43e2c9a7f1d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[机型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="581" y="0" width="47" height="25" uuid="52a723be-bc29-4f5c-9552-0dabbdbfc416"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[MTTT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="0" width="51" height="25" uuid="dc2931ae-9533-48a7-87ce-80cc16a351ac">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[航班号A]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="350" y="0" width="90" height="20" uuid="6d40be94-b001-44ba-b237-3f4b57e44275"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_SRTD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="440" y="0" width="90" height="20" uuid="1466f587-39c2-4768-88a8-5c2dab5db0dc"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_ALDT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="530" y="0" width="51" height="20" uuid="2a47da94-c854-40da-acfb-764768416567"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{STTT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="158" y="0" width="51" height="20" uuid="53057684-5749-4019-970a-1c0b7cb5ab63"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm">
+				<reportElement x="628" y="0" width="90" height="20" uuid="32a72e79-0d35-4a01-80cd-111047ee8976"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_ATOT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="718" y="0" width="59" height="20" uuid="fa4b1ded-a0a4-463f-a01f-66187310a22e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DELAYTIME}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="0" width="40" height="20" uuid="1bfae689-5d9a-4dd6-8a91-144d9ec7fb17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{index}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="260" y="0" width="90" height="20" uuid="dd8e434e-7f6b-4ea3-bb06-f5a0b603ad07"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_SRTA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="209" y="0" width="51" height="20" uuid="e6a230b1-628f-448b-9663-2f200d18ca04"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_RACT_AIRCRAFTTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="581" y="0" width="47" height="20" uuid="1639999c-adcf-4ff6-81b6-099c275a29e6"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PT_MTTT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="0" width="51" height="20" uuid="b91ef54d-1bb1-4612-949b-8357706cda2d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
