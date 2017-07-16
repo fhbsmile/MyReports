@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-26T17:56:25 -->
+<!-- 2017-06-27T10:08:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_DailyStandChangeOnlyA" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8f40dbec-6701-4fe1-b161-0e1fbffd8fa1">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -15,7 +15,7 @@
 (select Sat_idseq,pd_idseq as flightId,TO_CHAR(sat_createtime,'yyyy-mm-dd hh24:mi:ss') as sat_createtime,sat_moduser,SUBSTR(sat_oldvalue,2) as oldvalue,SUBSTR(sat_newvalue,2) as newvalue,'D' as direction ,pd_flightNumber as flightNumber,TO_CHAR(pd_srtd,'yyyy-mm-dd hh24:mi') as schedualTime
 from sy_audittrail, pl_departure
 where
-  (TO_CHAR(pd_srtd,'yyyy-mm-dd') between to_char(to_date('2017-06-24 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') and to_char(to_date('2017-06-25 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')) 
+  (TO_CHAR(pd_srtd,'yyyy-mm-dd') between to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') and to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')) 
   and Pd_RFST_FLIGHTSTATUS !='X' 
    and Pd_pd_mainflight is null 
    and SAT_MASTERKEY=to_CHAR(pd_idseq) 
@@ -23,8 +23,8 @@ where
    and sat_changecode ='PD_RSTA_STAND.UPDATE' ))
 order by direction,schedualTime,flightNumber,sat_idseq]]>
 	</queryString>
-	<field name="SAT_IDSEQ" class="java.math.BigDecimal"/>
-	<field name="FLIGHTID" class="java.math.BigDecimal"/>
+	<field name="SAT_IDSEQ" class="java.lang.Double"/>
+	<field name="FLIGHTID" class="java.lang.Double"/>
 	<field name="SAT_CREATETIME" class="java.lang.String"/>
 	<field name="SAT_MODUSER" class="java.lang.String"/>
 	<field name="OLDVALUE" class="java.lang.String"/>
