@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-09-20T12:11:56 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="生产运营基本情况_延误取消情况表2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b8ee890e-6142-498b-9d3b-762469abf60c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="HAK_PRD"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="256"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="738"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="697"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="290"/>
+	<parameter name="queryDate" class="java.util.Date" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[select SUM(NVL(cnt,0 )) AS All_cnt,
+       SUM(DECODE(flow,'Y',cnt,0 )) AS flow_cnt ,
+       SUM(DECODE(airline,'Y',cnt,0 )) AS airline_cnt ,
+       SUM(DECODE(broken,'Y',cnt,0 )) AS broken_cnt ,
+       SUM(DECODE(army,'Y',cnt,0 )) AS army_cnt ,
+       SUM(DECODE(weather,'Y',cnt,0 )) AS weather_cnt ,
+       SUM(DECODE(airport,'Y',cnt,0 )) AS airport_cnt ,
+       SUM(DECODE(atc,'Y',cnt,0 )) AS atc_cnt ,
+       SUM(DECODE(passenger,'Y',cnt,0 )) AS passenger_cnt ,
+       SUM(DECODE(otherr,'Y',cnt,0 )) AS otherr_cnt ,
+       '延误原因' as reportTypes
+from(
+select 1 as cnt,pd.PD_DELAYREASONS as rea ,
+           (case when pd.pd_delayreasons like '%流量%' then 'Y' else 'N' end) as flow,
+           (case when pd.pd_delayreasons like '%公司%' then 'Y' else 'N' end) as airline,
+           (case when pd.pd_delayreasons like '%故障%' then 'Y' else 'N' end) as broken,
+           (case when pd.pd_delayreasons like '%军事%' then 'Y' else 'N' end) as army,
+           (case when pd.pd_delayreasons like '%天气%' then 'Y' else 'N' end) as weather,
+           (case when pd.pd_delayreasons like '%机场%' then 'Y' else 'N' end) as airport,
+           (case when pd.pd_delayreasons like '%管制%' then 'Y' else 'N' end) as atc,
+           (case when pd.pd_delayreasons like '%旅客%' then 'Y' else 'N' end) as passenger,
+           (case when pd.pd_delayreasons not like '%流量%' and pd.pd_delayreasons not like '%公司%' and pd.pd_delayreasons not like '%故障%' and pd.pd_delayreasons not like '%军事%' and pd.pd_delayreasons not like '%天气%' and pd.pd_delayreasons not like '%机场%' and pd.pd_delayreasons not like '%管制%' and pd.pd_delayreasons not like '%旅客%' then 'Y' when pd.pd_delayreasons is null then 'Y' else 'N' end) as otherr
+           from pl_departure pd, pl_turn pt,pl_arrival pa 
+where pt.pt_pd_departure = pd.PD_IDSEQ(+) 
+and pt.pt_pa_arrival = pa.pa_idseq(+)
+and to_char(pd.pd_srtd - 5/24,'yyyymmdd')=substr(?, 1, 8)
+and pd.pd_atot is not null
+and pa.pa_aldt is not null
+and ((to_char(pd.pd_srtd - 5/24,'yyyymmdd')!=to_char(pa.pa_srta - 5/24,'yyyymmdd') and (pd.pd_atot - pd.pd_srtd)*1440-?>0) or
+     (to_char(pd.pd_srtd - 5/24,'yyyymmdd')=to_char(pa.pa_srta - 5/24,'yyyymmdd') and ((pa.pa_aldt<=pa.pa_srta and (pd.pd_atot - pd.pd_srtd)*1440-?>0) or (pa.pa_aldt>pa.pa_srta and (pd.pd_atot- pd.pd_srtd)*1440 - (pa.pa_aldt  - pa.pa_srta)*1440 -? -?>0)))
+         )
+and pt.PT_RMSC_SCENARIO =1)
+union all
+select SUM(NVL(cnt,0 )) AS All_cnt,
+       SUM(DECODE(flow,'Y',cnt,0 )) AS flow_cnt ,
+       SUM(DECODE(airline,'Y',cnt,0 )) AS airline_cnt ,
+       SUM(DECODE(broken,'Y',cnt,0 )) AS broken_cnt ,
+       SUM(DECODE(army,'Y',cnt,0 )) AS army_cnt ,
+       SUM(DECODE(weather,'Y',cnt,0 )) AS weather_cnt ,
+       SUM(DECODE(airport,'Y',cnt,0 )) AS airport_cnt ,
+       SUM(DECODE(atc,'Y',cnt,0 )) AS atc_cnt ,
+       SUM(DECODE(passenger,'Y',cnt,0 )) AS passenger_cnt ,
+       SUM(DECODE(otherr,'Y',cnt,0 )) AS otherr_cnt ,
+       '取消原因' as reportTypes
+from(
+select 1 as cnt,pa.PA_DELAYREASONS as rea ,
+           (case when pa.pa_delayreasons like '%流量%' then 'Y' else 'N' end) as flow,
+           (case when pa.pa_delayreasons like '%公司%' then 'Y' else 'N' end) as airline,
+           (case when pa.pa_delayreasons like '%故障%' then 'Y' else 'N' end) as broken,
+           (case when pa.pa_delayreasons like '%军事%' then 'Y' else 'N' end) as army,
+           (case when pa.pa_delayreasons like '%天气%' then 'Y' else 'N' end) as weather,
+           (case when pa.pa_delayreasons like '%机场%' then 'Y' else 'N' end) as airport,
+           (case when pa.pa_delayreasons like '%管制%' then 'Y' else 'N' end) as atc,
+           (case when pa.pa_delayreasons like '%旅客%' then 'Y' else 'N' end) as passenger,
+           (case when pa.pa_delayreasons not like '%流量%' and pa.pa_delayreasons not like '%公司%' and pa.pa_delayreasons not like '%故障%' and pa.pa_delayreasons not like '%军事%' and pa.pa_delayreasons not like '%天气%' and pa.pa_delayreasons not like '%机场%' and pa.pa_delayreasons not like '%管制%' and pa.pa_delayreasons not like '%旅客%' then 'Y' when pa.pa_delayreasons is null then 'Y' else 'N' end) as otherr
+           from pl_arrival pa, pl_turn pt 
+where pt.pt_pa_arrival = pa.PA_IDSEQ(+) 
+and to_char(pa.pa_srta - 5/24,'yyyymmdd')=substr(?, 1, 8)
+and pa.pa_rfst_flightstatus ='X'
+and pt.PT_RMSC_SCENARIO =1
+union all
+select 1 as cnt,pd.PD_DELAYREASONS as rea ,
+           (case when pd.pd_delayreasons like '%流量%' then 'Y' else 'N' end) as flow,
+           (case when pd.pd_delayreasons like '%公司%' then 'Y' else 'N' end) as airline,
+           (case when pd.pd_delayreasons like '%故障%' then 'Y' else 'N' end) as broken,
+           (case when pd.pd_delayreasons like '%军事%' then 'Y' else 'N' end) as army,
+           (case when pd.pd_delayreasons like '%天气%' then 'Y' else 'N' end) as weather,
+           (case when pd.pd_delayreasons like '%机场%' then 'Y' else 'N' end) as airport,
+           (case when pd.pd_delayreasons like '%管制%' then 'Y' else 'N' end) as atc,
+           (case when pd.pd_delayreasons like '%旅客%' then 'Y' else 'N' end) as passenger,
+           (case when pd.pd_delayreasons not like '%流量%' and pd.pd_delayreasons not like '%公司%' and pd.pd_delayreasons not like '%故障%' and pd.pd_delayreasons not like '%军事%' and pd.pd_delayreasons not like '%天气%' and pd.pd_delayreasons not like '%机场%' and pd.pd_delayreasons not like '%管制%' and pd.pd_delayreasons not like '%旅客%' then 'Y' when pd.pd_delayreasons is null then 'Y' else 'N' end) as otherr
+           from pl_departure pd, pl_turn pt  
+where pt.pt_pd_departure = pd.PD_IDSEQ(+) 
+and to_char(pd.pd_srtd - 5/24,'yyyymmdd')=substr(?, 1, 8)
+and pd.pd_rfst_flightstatus ='X'
+and pt.PT_RMSC_SCENARIO =1)]]>
+	</queryString>
+	<field name="ALL_CNT" class="java.lang.Double"/>
+	<field name="FLOW_CNT" class="java.lang.Double"/>
+	<field name="AIRLINE_CNT" class="java.lang.Double"/>
+	<field name="BROKEN_CNT" class="java.lang.Double"/>
+	<field name="ARMY_CNT" class="java.lang.Double"/>
+	<field name="WEATHER_CNT" class="java.lang.Double"/>
+	<field name="AIRPORT_CNT" class="java.lang.Double"/>
+	<field name="ATC_CNT" class="java.lang.Double"/>
+	<field name="PASSENGER_CNT" class="java.lang.Double"/>
+	<field name="OTHERR_CNT" class="java.lang.Double"/>
+	<field name="REPORTTYPES" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="76" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="120" y="10" width="280" height="20" uuid="c0591b22-ffdd-4bea-8c4e-b17fd7d399a7"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[取消延误原因情况表]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="46" width="60" height="20" uuid="6c505df9-70a9-45b2-893b-fbe95b5a0447">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[统计日期：]]></text>
+			</staticText>
+			<textField pattern="yyyy-MM-dd" isBlankWhenNull="true">
+				<reportElement x="60" y="46" width="100" height="20" uuid="114437a0-881b-4f9a-8be7-e5d0f133d528">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$P{queryDate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement mode="Opaque" x="52" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="cd31ab75-72dd-45fe-91aa-23e48b27405e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[流量控制]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="102" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="5ed5676a-14eb-4005-9925-c2de3f2fb590">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[航空公司]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="152" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="321c9f66-ea14-4478-8f3a-9bb284509ae7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[飞机故障]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="202" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="cd71e832-fd83-45df-858f-4f51c7b69aa7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[军事活动]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="252" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="546602d4-f87e-425e-ba55-751fa9a80b9c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[天气]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="302" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="8f6bf691-b8ab-41a8-a093-7d22e4e20e05">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[机场]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="352" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="eb6ad8c3-376a-40bb-9950-6036e4845b93">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[空管]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="402" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="29c524e3-ecda-41e5-85dc-29ccee4d57f8">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[旅客]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="452" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="b98902fe-087c-4dd9-be02-740970293b8b">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[其它]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="0" width="50" height="20" backcolor="#D9D4D4" uuid="2379803a-9643-40b6-ad00-d8d30ecb3413">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[类型]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement x="52" y="0" width="50" height="20" uuid="21cc6620-ebed-4cd4-a9ee-ce206dd2d341">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FLOW_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="102" y="0" width="50" height="20" uuid="8d434da2-c2bb-45c8-92ec-a7aa65757638">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AIRLINE_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="152" y="0" width="50" height="20" uuid="48d78340-1774-4026-86fe-9d14a7c5cf2f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{BROKEN_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="202" y="0" width="50" height="20" uuid="0fc18682-5cc3-4871-a5ef-b0915210ceb5">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ARMY_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="0" width="50" height="20" uuid="46b0b034-3afa-46f9-9a45-b18b2c763e2a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{WEATHER_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="302" y="0" width="50" height="20" uuid="13ca8129-28ab-47a9-a11a-eafacaac8599">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AIRPORT_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="352" y="0" width="50" height="20" uuid="234e1baf-02cc-4c83-9161-c6db8fec1184">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ATC_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="402" y="0" width="50" height="20" uuid="535bc4a3-ae20-4cff-b32f-d05fc4b737a1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PASSENGER_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="0" width="50" height="20" uuid="3111fe40-3e2d-4898-ab15-632f041a08cb">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{OTHERR_CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="50" height="20" uuid="7e875aa9-883c-48cf-828c-261703d59c04">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{REPORTTYPES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="261" splitType="Stretch"/>
+	</summary>
+</jasperReport>
