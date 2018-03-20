@@ -38,6 +38,13 @@ where pt.pt_pa_arrival = pa.PA_IDSEQ(+) and pt.pt_pd_departure= pd.PD_IDSEQ(+)
 and to_char(pa.pa_srta - 5/24,'yyyy-mm-dd')='2017-09-11'
 and (pd.pd_idseq is null or (pd.pd_idseq is not null and TRUNC(pd.PD_SRTD-5/24) != TRUNC(pa.PA_SRTA-5/24)))
 group by pa.PA_RAL_AIRLINE) T;
+
+select pa.pa_flightnumber flightNumber, to_char(pa.pa_srta - 5/24,'yyyy-mm-dd hh24:mi') srta,pa.PA_RSTA_STAND as stand_A, pa.PA_RAL_AIRLINE airline,pd.pd_flightnumber flightNumber, to_char(pd.pd_srtd - 5/24,'yyyy-mm-dd hh24:mi') srtd,pd.PD_RSTA_STAND as stand_D from pl_arrival pa, pl_turn pt , pl_departure pd
+where pt.pt_pa_arrival = pa.PA_IDSEQ(+) and pt.pt_pd_departure= pd.PD_IDSEQ(+)
+and to_char(pa.pa_srta - 5/24,'yyyy-mm-dd')='2017-09-11'
+and (pd.pd_idseq is null or (pd.pd_idseq is not null and TRUNC(pd.PD_SRTD-5/24) != TRUNC(pa.PA_SRTA-5/24)))
+and pa.PA_RFST_FLIGHTSTATUS != 'X'
+order by pa.PA_RAL_AIRLINE;
 ------------------------------------生产运营基本情况航班运行表-机型停场情况表
 select SUM(NVL(cnt,0 )) AS All_cnt ,
        SUM(DECODE(T.airtype,'B787',cnt,0 )) AS B78_cnt ,
@@ -324,5 +331,10 @@ from(
           group by 'divout',DECODE(pa.pa_ral_airline,'GS','HU','JD','HU','GX','HU','8L','HU','9H','HU','PN','HU','FU','HU','HX','HU','UQ','HU',pa.pa_ral_airline)
       )B group by B.cntType,DECODE(B.airline,'CZ','南航','HU','海航','外航') 
 )A group by A.airline;
-
+----------------------------
+select count(*), pa.PA_RAL_AIRLINE from pl_arrival pa, pl_turn pt , pl_departure pd
+where pt.pt_pa_arrival = pa.PA_IDSEQ(+) and pt.pt_pd_departure= pd.PD_IDSEQ(+)
+and to_char(pa.pa_srta - 5/24,'yyyy-mm-dd')='2017-09-11'
+and (pd.pd_idseq is null or (pd.pd_idseq is not null and TRUNC(pd.PD_SRTD-5/24) != TRUNC(pa.PA_SRTA-5/24)))
+group by pa.PA_RAL_AIRLINE;
 

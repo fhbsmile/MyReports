@@ -17,4 +17,5 @@ pa.pa_flightnumber,
       AND  pt.pt_pa_arrival   = pa.pa_idseq(+)
       AND TO_CHAR(pa.pa_srta- 5/24 ,'yyyy-mm-dd') BETWEEN  to_char(to_date('2017-02-01 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND to_char(to_date('2017-03-07 00:00:00','yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')
       AND  pa.PA_RSTC_SERVICETYPECODE='Q/B'
-      AND pa.PA_RFST_FLIGHTSTATUS !='X';
+      AND pa.PA_RFST_FLIGHTSTATUS !='X'
+      order by pa.PA_ALDT;
