@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl"><name>BJ_GA_PEK_AOS_TST</name><driver>oracle.jdbc.driver.OracleDriver</driver><username>pek_aos_tst</username><password>aos_oracle</password><savePassword>true</savePassword><url>jdbc:oracle:thin:@192.168.102.11:1521:aodb</url><database></database><serverAddress></serverAddress><classpath>D:\Work_Program\sqldeveloper4.1.5\jdbc\lib\ojdbc7.jar</classpath></jdbcDataAdapter>
