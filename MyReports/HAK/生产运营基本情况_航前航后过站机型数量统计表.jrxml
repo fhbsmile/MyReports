@@ -12,8 +12,8 @@ select pa_idseq, pa_ral_airline as airline,'A' as indicator,pa_ract_aircrafttype
 from pl_turn pt,pl_arrival pa,pl_departure pd
 where pt.pt_pa_arrival = pa.pa_idseq(+)
 and pt.pt_pd_departure = pd.pd_idseq(+)
-and (to_char(pa.pa_sibt,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_sobt,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
-and ((to_char(pa.pa_sibt - 5/24, 'yyyymmdd') <> to_char(pd.pd_sobt - 5/24, 'yyyymmdd')) or pd.pd_sobt is null)
+and (to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
+and ((to_char(pa.pa_srta - 5/24, 'yyyymmdd') <> to_char(pd.pd_srtd - 5/24, 'yyyymmdd')) or pd.pd_srtd is null)
 and pa.PA_RFST_FLIGHTSTATUS <> 'X'
 and pt.pt_rmsc_scenario = 1 
 union 
@@ -21,8 +21,8 @@ union
 from pl_turn pt,pl_arrival pa,pl_departure pd
 where pt.pt_pa_arrival = pa.pa_idseq(+)
 and pt.pt_pd_departure = pd.pd_idseq(+)
-and (to_char(pa.pa_sibt,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_sobt,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
-and ((to_char(pa.pa_sibt - 5/24, 'yyyymmdd') <> to_char(pd.pd_sobt - 5/24, 'yyyymmdd')) or pa.pa_sibt is null)
+and (to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
+and ((to_char(pa.pa_srta - 5/24, 'yyyymmdd') <> to_char(pd.pd_srtd - 5/24, 'yyyymmdd')) or pa.pa_srta is null)
 and pd.Pd_RFST_FLIGHTSTATUS <> 'X'
 and pt.pt_rmsc_scenario = 1) 
 union 
@@ -30,8 +30,8 @@ union
 from pl_turn pt,pl_arrival pa,pl_departure pd
 where pt.pt_pa_arrival = pa.pa_idseq(+)
 and pt.pt_pd_departure = pd.pd_idseq(+)
-and (to_char(pa.pa_sibt,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_sobt,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
-and to_char(pa.pa_sibt - 5/24, 'yyyymmdd') = to_char(pd.pd_sobt - 5/24, 'yyyymmdd')
+and (to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
+and to_char(pa.pa_srta - 5/24, 'yyyymmdd') = to_char(pd.pd_srtd - 5/24, 'yyyymmdd')
 and pd.Pd_RFST_FLIGHTSTATUS <> 'X'
 and pt.pt_rmsc_scenario = 1) 
 ) query where airline not in ('GA','OQ','MF','CZ','9C','KY','TV') group by airline,indicator,aircrafttype order by airline,indicator,aircrafttype]]>
@@ -74,17 +74,17 @@ and pt.pt_rmsc_scenario = 1)
 				<text><![CDATA[日期：]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="158" y="63" width="80" height="20" uuid="95f1ac63-4c51-4caf-b386-32d6a7d9c080"/>
+				<reportElement x="158" y="63" width="68" height="20" uuid="95f1ac63-4c51-4caf-b386-32d6a7d9c080"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{STARTDATE}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="272" y="63" width="80" height="20" uuid="a8c0f81d-6c81-4f11-a6fb-e750b01bd8d2"/>
+				<reportElement x="305" y="63" width="80" height="20" uuid="a8c0f81d-6c81-4f11-a6fb-e750b01bd8d2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{ENDDATE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="242" y="62" width="30" height="20" uuid="cff896f3-c169-4fc8-b69b-255814216db1"/>
+				<reportElement x="226" y="63" width="79" height="20" uuid="cff896f3-c169-4fc8-b69b-255814216db1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[到]]></text>
 			</staticText>
@@ -94,7 +94,7 @@ and pt.pt_rmsc_scenario = 1)
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="176" y="0" width="50" height="20" uuid="4f371a19-19ea-4b31-845b-6779543bd1b4">
+				<reportElement x="158" y="0" width="68" height="20" uuid="4f371a19-19ea-4b31-845b-6779543bd1b4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -165,7 +165,7 @@ and pt.pt_rmsc_scenario = 1)
 				<textFieldExpression><![CDATA[$V{index}.intValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="176" y="0" width="50" height="20" uuid="66cf91dd-4343-4cef-ba54-378cb8ec3086">
+				<reportElement x="158" y="0" width="68" height="20" uuid="66cf91dd-4343-4cef-ba54-378cb8ec3086">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
