@@ -9,14 +9,14 @@
 		<![CDATA[select pa_idseq, 
 pa_ral_airline as airline_a,
 pa.pa_flightnumber,
-pa.pa_srta,decode(to_char(pa.pa_srta - 5/24, 'yyyymmdd'),to_char(pd.pd_srtd - 5/24, 'yyyymmdd'),'过站','航前') as arrivalindicator,
+pa.pa_srta,decode(to_char(pa.pa_srta - 5/24, 'yyyymmdd'),to_char(pd.pd_srtd - 5/24, 'yyyymmdd'),'过站','航后') as arrivalindicator,
 pa_ract_aircrafttype as arrivalaircrafttype ,
 pd_idseq,
 pd_ral_airline as airline_d,
 pd.pd_flightnumber,
 pd.pd_srtd,
 pd_ract_aircrafttype as departureaircrafttype,
-decode(to_char(pa.pa_srta - 5/24, 'yyyymmdd'),to_char(pd.pd_srtd - 5/24, 'yyyymmdd'),'过站','航后') as departureindicator,
+decode(to_char(pa.pa_srta - 5/24, 'yyyymmdd'),to_char(pd.pd_srtd - 5/24, 'yyyymmdd'),'过站','航前') as departureindicator,
 substr(?, 1, 8) as startDate,
 substr(?, 1, 8) as endDate
 from pl_turn pt,pl_arrival pa,pl_departure pd

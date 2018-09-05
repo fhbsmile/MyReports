@@ -8,20 +8,20 @@
 	<queryString language="SQL">
 		<![CDATA[select airline,indicator,aircrafttype,Count(*) as cnt, substr(?, 1, 8) as startDate,substr(?, 1, 8) as endDate from 
 (
-select pa_idseq, pa_ral_airline as airline,'A' as indicator,pa_ract_aircrafttype as aircrafttype,pd_idseq
+select pa_idseq, pa_ral_airline as airline,'C' as indicator,pa_ract_aircrafttype as aircrafttype,pd_idseq
 from pl_turn pt,pl_arrival pa,pl_departure pd
 where pt.pt_pa_arrival = pa.pa_idseq(+)
 and pt.pt_pd_departure = pd.pd_idseq(+)
-and (to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
+and to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8)
 and ((to_char(pa.pa_srta - 5/24, 'yyyymmdd') <> to_char(pd.pd_srtd - 5/24, 'yyyymmdd')) or pd.pd_srtd is null)
 and pa.PA_RFST_FLIGHTSTATUS <> 'X'
 and pt.pt_rmsc_scenario = 1 
 union 
-(select pa_idseq, pd_ral_airline as airline,'C' as indicator,pd_ract_aircrafttype as aircrafttype,pd_idseq
+(select pa_idseq, pd_ral_airline as airline,'A' as indicator,pd_ract_aircrafttype as aircrafttype,pd_idseq
 from pl_turn pt,pl_arrival pa,pl_departure pd
 where pt.pt_pa_arrival = pa.pa_idseq(+)
 and pt.pt_pd_departure = pd.pd_idseq(+)
-and (to_char(pa.pa_srta,'yyyymmdd') between substr(?, 1, 8) and substr(?, 1, 8) or  to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8))
+and to_char(pd.pd_srtd,'yyyymmdd')  between substr(?, 1, 8) and substr(?, 1, 8)
 and ((to_char(pa.pa_srta - 5/24, 'yyyymmdd') <> to_char(pd.pd_srtd - 5/24, 'yyyymmdd')) or pa.pa_srta is null)
 and pd.Pd_RFST_FLIGHTSTATUS <> 'X'
 and pt.pt_rmsc_scenario = 1) 
