@@ -190,7 +190,7 @@ and pt.pt_rmsc_scenario = 1 order by pa.pa_flightnumber,pd.pd_flightnumber,pa.pa
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[SRTA]]></text>
+				<text><![CDATA[SRTD]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="443" y="0" width="60" height="20" uuid="c3ab31f6-35c0-462b-bffc-b04a3d55c1c5">
@@ -229,19 +229,6 @@ and pt.pt_rmsc_scenario = 1 order by pa.pa_flightnumber,pd.pd_flightnumber,pa.pa
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{AIRLINE_A}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="0" width="60" height="20" uuid="97c257f2-d2fe-4421-bf3f-9ac38c12154c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Microsoft YaHei" pdfFontName="" pdfEncoding=""/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="183" y="0" width="45" height="20" uuid="4ae74534-c4ff-4f42-a1df-641545440fd8">
@@ -287,19 +274,6 @@ and pt.pt_rmsc_scenario = 1 order by pa.pa_flightnumber,pd.pd_flightnumber,pa.pa
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{AIRLINE_D}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="303" y="0" width="60" height="20" uuid="59e06e2d-1421-4756-8204-04fb9ccdb7af">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Microsoft YaHei" pdfFontName="" pdfEncoding=""/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
-			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
 				<reportElement x="363" y="0" width="80" height="20" uuid="9bc233f7-de0e-4322-8554-0b2ad3bbc92a">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -332,6 +306,28 @@ and pt.pt_rmsc_scenario = 1 order by pa.pa_flightnumber,pd.pd_flightnumber,pa.pa
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}.isEmpty()?null:$F{DEPARTUREINDICATOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="0" width="60" height="20" uuid="0cabdc9b-d438-4b45-897f-8b58be7a01d0"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="43" y="0" width="60" height="20" uuid="1f1f60b2-683f-4307-9bfd-531fa0d3c8d1"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

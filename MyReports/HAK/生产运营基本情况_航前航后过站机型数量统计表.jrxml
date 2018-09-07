@@ -176,19 +176,6 @@ and pt.pt_rmsc_scenario = 1)
 				<textFieldExpression><![CDATA[$F{AIRLINE}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="226" y="0" width="80" height="20" uuid="97c257f2-d2fe-4421-bf3f-9ac38c12154c">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Microsoft YaHei" pdfFontName="" pdfEncoding=""/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{INDICATOR}.equals( "A" )? "航前": ($F{INDICATOR}.equals( "B")?"过站":"航后")]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
 				<reportElement x="306" y="0" width="80" height="20" uuid="4ae74534-c4ff-4f42-a1df-641545440fd8">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -209,6 +196,17 @@ and pt.pt_rmsc_scenario = 1)
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{CNT}.intValue()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="226" y="0" width="80" height="20" uuid="c0340b5e-0a0f-4d45-b1cf-dbe312537168"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{INDICATOR}.equals( "A" )? "航前": ($F{INDICATOR}.equals( "B")?"过站":"航后")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
