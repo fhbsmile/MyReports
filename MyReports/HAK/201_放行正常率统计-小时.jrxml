@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="放行正常率统计" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff32b228-92fe-42a6-b7e9-10ec695ba018">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="131"/>
+	<queryString>
+		<![CDATA[select delayRate.pd_date, delayRate.pd_hour, count(case delayRate.delayed when 'Y' then 1 end) as delayNo, count(1) as fltNo,
+       delayRate.start_time, delayRate.end_time
+from (select delay.*, decode(sign(delayTime),1,'Y','N') as delayed
+from(
+select dep.*,
+       round(decode(dep.passThru||dep.arrDelay, 'YY', (dep.pd_atot - (dep.pa_aldt+10/24/60+(dep.pd_srtd-dep.pa_srta)))*24*60-25,
+                                                (dep.pd_atot - dep.pd_srtd)*24*60-25)) as delayTime
+from(
+select pd.pd_flightnumber, to_char(pd.pd_srtd-5/24,'yyyymmdd') as pd_date, to_char(pd.pd_srtd, 'hh24') as pd_hour, pd.pd_srtd,
+       pd.pd_atot, pa.pa_flightnumber, to_char(pa.pa_srta-5/24, 'yyyymmdd') as pa_date, pa.pa_srta, pa.pa_aldt,
+       decode(to_char(pd.pd_srtd-5/24,'yyyymmdd'), to_char(pa.pa_srta-5/24, 'yyyymmdd'), 'Y', 'N') as passThru,
+       decode(sign(pa.pa_aldt + 10/24/60 - pa.pa_srta), 1, 'Y', 'N') arrDelay,
+       to_char(to_date(?, 'yyyymmdd hh24miss'),'yyyy-mm-dd hh24:mi') as start_time,
+       to_char(to_date(?, 'yyyymmdd hh24miss'),'yyyy-mm-dd hh24:mi') as end_time
+from pl_departure pd
+left join pl_turn pt on pt.pt_pd_departure = pd.pd_idseq
+left join pl_arrival pa on pa.pa_idseq = pt.pt_pa_arrival
+where pd.pd_rstc_servicetypecode in ('W/Z','C/B','H/Y','Z/X','H/G','L/W')
+and pd.pd_pd_mainflight is null
+and pd.pd_rmsc_scenario = 1
+and (pd.pd_rrmk_remark <> 'CNCL' or pd.pd_rrmk_remark is null)
+) dep
+) delay
+where delay.pd_srtd between to_date(?, 'yyyymmdd hh24miss') and to_date(?, 'yyyymmdd hh24miss')) delayRate
+group by delayRate.start_time, delayRate.end_time, delayRate.pd_date, delayRate.pd_hour
+order by delayRate.pd_date, delayRate.pd_hour]]>
+	</queryString>
+	<field name="PD_DATE" class="java.lang.String"/>
+	<field name="PD_HOUR" class="java.lang.String"/>
+	<field name="DELAYNO" class="java.lang.Double"/>
+	<field name="FLTNO" class="java.lang.Double"/>
+	<field name="START_TIME" class="java.lang.String"/>
+	<field name="END_TIME" class="java.lang.String"/>
+	<variable name="NormalRate" class="java.lang.Double" resetType="None">
+		<variableExpression><![CDATA[($F{FLTNO}-$F{DELAYNO})/$F{FLTNO}]]></variableExpression>
+	</variable>
+	<variable name="TotalDelay" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{DELAYNO}]]></variableExpression>
+	</variable>
+	<variable name="TotalFlt" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{FLTNO}]]></variableExpression>
+	</variable>
+	<variable name="TotalNormality" class="java.lang.Double">
+		<variableExpression><![CDATA[($V{TotalFlt}-$V{TotalDelay})/$V{TotalFlt}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement x="131" y="0" width="294" height="51" uuid="691bc40b-8f48-4cae-a84e-aeb971e6105b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[美兰机场放行正常率统计]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="1" y="61" width="554" height="20" uuid="ff85361f-06db-4773-8a4b-601b6e8d9b0b"/>
+				<box leftPadding="2"/>
+				<textFieldExpression><![CDATA["查询时间段："+$F{START_TIME}+" ~ "+$F{END_TIME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="46" y="0" width="85" height="28" uuid="ba9d0dc5-2682-4c3a-a9dc-6024a83df896"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="131" y="0" width="85" height="28" uuid="f103efdf-95f0-49f4-b406-ca3bf4d95aaf"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[小时]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="216" y="0" width="85" height="28" uuid="44e15871-146f-4782-83ac-3406bd6bda4d"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[延误航班数]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="301" y="0" width="85" height="28" uuid="a931758e-b9a4-4b06-b45e-bba5ed1ca12c"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[航班总数]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="386" y="0" width="98" height="28" uuid="e0d53039-739c-4605-b359-9ffa998a4e87"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[放行正常率]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="28" splitType="Stretch">
+			<textField>
+				<reportElement x="46" y="0" width="85" height="28" uuid="05cb84be-efb5-456d-86ce-1a0e9923cea3"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_DATE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="0" width="85" height="28" uuid="55137f2a-d6d3-44bd-a0c6-9f92182d57ef"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_HOUR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="216" y="0" width="85" height="28" uuid="a2bcd8c4-2db2-49ea-bc53-4284d036e6a2"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DELAYNO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="301" y="0" width="85" height="28" uuid="aa442d1a-cce6-406c-88b5-cf52bcaef594"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{FLTNO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement x="386" y="0" width="98" height="28" uuid="d70d1be6-c711-43f4-a565-4a0827a05039"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{NormalRate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<staticText>
+				<reportElement x="46" y="0" width="170" height="28" uuid="f0f71712-ac3c-41ab-acd2-c41ced4e9c31"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[总计]]></text>
+			</staticText>
+			<textField pattern="###0">
+				<reportElement x="216" y="1" width="85" height="27" uuid="dddb49dd-ec43-45a9-8180-4600c2052c1f"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalDelay}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="301" y="1" width="85" height="27" uuid="ed46a857-fe2f-4332-823b-b86ef4bade02"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalFlt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %">
+				<reportElement x="386" y="1" width="98" height="27" uuid="3f336509-32f2-4a04-b4c2-b50f4a82ef7d"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TotalNormality}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

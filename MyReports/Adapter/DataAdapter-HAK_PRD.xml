@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl"><name>HAK_PRD</name><driver>oracle.jdbc.driver.OracleDriver</driver><username>hak_prd</username><password>hak_aodb_oracle</password><savePassword>true</savePassword><url>jdbc:oracle:thin:@10.23.3.29:1521:aodb</url><database></database><serverAddress></serverAddress><classpath>D:\Work_Program\sqldeveloper4.1.5\jdbc\lib\ojdbc7.jar</classpath></jdbcDataAdapter>
