@@ -26,7 +26,7 @@ PD_AOBT as aobt,
 PD_SRTD as srtd,
 PD_ATOT as atot,
 to_CHAR(PD_SRTD,'yyyy-mm-dd') as flightDate,
-case when departureindicator ='G' and isontime = 'N' then ceil((NVL(PD_ATOT,sysdate)-NVL(PD_ETOT,PD_SRTD))*24*60 -25) else  ceil((NVL(PD_ATOT,sysdate)-PD_SRTD)*24*60 -25) end delayTime,
+case when departureindicator ='G' and isontime = 'N' then ceil((NVL(PD_ATOT,sysdate)-NVL(PA_ALDT+10/24/60+(PD_SRTD-PA_SRTA),PD_SRTD))*24*60 -25) else  ceil((NVL(PD_ATOT,sysdate)-PD_SRTD)*24*60 -25) end delayTime,
 delayview.delayCode as delayCode,
 delayview.delaydiscription as delayReason,
 PD_RSTC_SERVICETYPECODE AS serviceTypeCode
@@ -51,4 +51,4 @@ and pt.pt_pa_arrival is not null
 and pt.pt_pd_departure is not null
 and pd.pd_srtd  between to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') and to_date('2019-01-01 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
 and pt.pt_rmsc_scenario = 1) flight left join ( select PL_DELAYREASON.pdlr_pd_departure as pd_seq,PL_DELAYREASON.pdlr_rdlr_delayreason as delayCode,ref_delayreason.rdlr_description as delaydiscription from ref_delayreason, pl_delayreason where pl_delayreason.pdlr_rdlr_delayreason = ref_delayreason.rdlr_codenumeric) delayview on flight.pd_idseq = delayview.pd_seq 
-where case when departureindicator ='G' and isontime = 'N' then ceil((NVL(PD_ATOT,sysdate)-NVL(PD_ETOT,PD_SRTD))*24*60 -25) else  ceil((NVL(PD_ATOT,sysdate)-PD_SRTD)*24*60 -25) end  >0;
+where case when departureindicator ='G' and isontime = 'N' then ceil((NVL(PD_ATOT,sysdate)-NVL(PA_ALDT+10/24/60+(PD_SRTD-PA_SRTA),PD_SRTD))*24*60 -25) else  ceil((NVL(PD_ATOT,sysdate)-PD_SRTD)*24*60 -25) end  >0;

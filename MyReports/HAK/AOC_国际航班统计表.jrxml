@@ -208,7 +208,7 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PA_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PA_FLIGHTNUMBER}: null]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
 				<reportElement x="100" y="0" width="40" height="20" uuid="97c257f2-d2fe-4421-bf3f-9ac38c12154c">
@@ -219,7 +219,7 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PA_RCTT_COUNTRYTYPE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PA_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PA_RCTT_COUNTRYTYPE}: null]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="470" y="0" width="90" height="20" uuid="b607637c-ace5-4c60-8a4c-74aba3dd7274">
@@ -252,7 +252,7 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PD_SRTD}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PD_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PD_SRTD}: null]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
 				<reportElement x="140" y="0" width="80" height="20" uuid="4ae74534-c4ff-4f42-a1df-641545440fd8">
@@ -263,7 +263,7 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PA_SRTA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PA_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PA_SRTA}: null]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="220" y="0" width="50" height="20" uuid="769f1bbb-f47e-4270-ab0a-9af8571bd339">
@@ -274,7 +274,7 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PD_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PD_FLIGHTNUMBER}: null]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
 				<reportElement x="270" y="0" width="40" height="20" uuid="9f20ade1-38e8-4339-8c04-3d3dbe5684e9">
@@ -285,13 +285,10 @@ order by pa.pa_srta,pd.pd_srtd]]>
 					<pen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PD_RCTT_COUNTRYTYPE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PD_RCTT_COUNTRYTYPE}.equals( "I" )? $F{PD_RCTT_COUNTRYTYPE}: null]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>
 	</summary>
