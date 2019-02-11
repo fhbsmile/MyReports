@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="大小夜航航班统计" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="fa257fb6-ebc7-45d2-9735-c4c72781e3b9">
+	<property name="ireport.zoom" value="1.331000000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adapter\DataAdapterNKG_PRD.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="282"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="718"/>
+	<queryString>
+		<![CDATA[select gga.da,gga.pa_flightnumber ,gga.arouting,COALESCE(gga.pa_aldt,gga.pa_eldt,gga.pa_srta) as atime, ggd.pd_flightnumber,ggd.drouting,COALESCE(ggd.pd_atot,ggd.pd_etot,ggd.pd_srtd) as dtime  from (
+select * from (
+select 
+ROW_NUMBER() OVER(PARTITION BY TRUNC(pa.PA_SRTA-5/24) ORDER BY pa.pa_aldt DESC) rn,
+pa.pa_idseq,
+pa.pa_flightnumber,
+pa.pa_eldt,
+pa.pa_srta,
+pa.pa_aldt,
+pt.pt_routing as arouting,
+TRUNC(pa.PA_SRTA-5/24) as da
+from pl_arrival pa, pl_turn pt
+where pt.pt_pa_arrival = pa.pa_idseq(+)
+and TRUNC(pa.PA_SRTA-5/24) BETWEEN to_date(?, 'YYYY-MM-DD hh24:mi:ss') AND to_date(?, 'YYYY-MM-DD hh24:mi:ss')
+and pa.pa_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
+and pa.pa_rfst_flightstatus !='X'
+and pt.pt_rmsc_scenario = 1
+) ga where ga.rn =1) gga left join (select * from (select * from(
+select 
+ROW_NUMBER() OVER(PARTITION BY TRUNC(pd.PD_SRTD-5/24) ORDER BY pd.pd_atot DESC) rn,
+pd.pd_idseq,
+pd.pd_flightnumber,
+pd.pd_srtd,
+pd.pd_etot,
+pd.pd_atot,
+pt.pt_routing as drouting,
+TRUNC(pd.PD_SRTD-5/24) as dd
+from pl_departure pd, pl_turn pt
+where pt.pt_pd_departure = pd.pd_idseq(+)
+and TRUNC(pd.PD_SRTD-5/24) BETWEEN to_date(?, 'YYYY-MM-DD hh24:mi:ss') AND to_date(?, 'YYYY-MM-DD hh24:mi:ss')
+and pd.pd_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
+and pd.pd_rfst_flightstatus !='X'
+and pt.pt_rmsc_scenario = 1
+) gd where gd.rn =1))ggd on gga.da = ggd.dd]]>
+	</queryString>
+	<field name="DA" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="DA"/>
+	</field>
+	<field name="PA_FLIGHTNUMBER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PA_FLIGHTNUMBER"/>
+	</field>
+	<field name="AROUTING" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AROUTING"/>
+	</field>
+	<field name="ATIME" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="ATIME"/>
+	</field>
+	<field name="PD_FLIGHTNUMBER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PD_FLIGHTNUMBER"/>
+	</field>
+	<field name="DROUTING" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DROUTING"/>
+	</field>
+	<field name="DTIME" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="DTIME"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="242" y="29" width="398" height="20" uuid="e8a86c1e-7c46-41e0-99bb-edaeb91cabe9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[大小夜航航班统计表]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="114" height="20" uuid="2bf7be3a-f205-4675-9271-3d95d2b6cf40"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[日期]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="0" width="114" height="20" uuid="13120a52-79b2-489e-a2d0-86f92fab7e43"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[小夜航航班]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="228" y="0" width="114" height="20" uuid="2ea7f979-ab42-4b6b-aec6-62c0655bb7a6"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[航线]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="342" y="0" width="114" height="20" uuid="97d2596f-5747-436f-9543-60810741e3d2"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[实际起飞时间]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="456" y="0" width="114" height="20" uuid="2f08c9e1-2cf8-4903-bb1f-438eada72cb6"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[大夜航航班]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="570" y="0" width="114" height="20" uuid="b7ac96fa-880f-4d86-a8a3-e36b12ef3dcb"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[航线]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="684" y="0" width="114" height="20" uuid="509a714c-4a98-4bd2-ab74-385e72e84e15"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[实际落地时间]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="yyyy-MM-DD" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="114" height="20" uuid="c2e79c47-4d77-4a32-bc6b-4df60973b6b0"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="0" width="114" height="20" uuid="cfea070b-275c-449d-9832-a9d30c4198c9"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="228" y="0" width="114" height="20" uuid="934b238b-8571-43f2-9a20-c645bd7e2d52"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DROUTING}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-DD HH:mm" isBlankWhenNull="true">
+				<reportElement x="342" y="0" width="114" height="20" uuid="1116abb6-ec73-4faa-92fd-0f89f37fcf17"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{DTIME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="456" y="0" width="114" height="20" uuid="77df2fdf-eba8-4952-9129-f85029e04e4b"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="570" y="0" width="114" height="20" uuid="a0598adf-3cd0-490c-bcb5-939871136511"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AROUTING}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-MM-DD HH:mm" isBlankWhenNull="true">
+				<reportElement x="684" y="0" width="114" height="20" uuid="35752eb6-d10e-4d21-8ad0-d7ee25397c52"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{ATIME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
