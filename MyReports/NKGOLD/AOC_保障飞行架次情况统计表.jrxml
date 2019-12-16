@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-16T17:45:13 -->
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AOC_FeiXingBaozhangjiaciDateFrom0050_add_A_D" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f5f54feb-20fe-4fdf-853e-3035aedcd657">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adapter\DataAdapterNKG_PRD.xml"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="408"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="586"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="377"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="612"/>
 	<parameter name="startDate" class="java.util.Date"/>
 	<parameter name="endDate" class="java.util.Date"/>
 	<queryString>
@@ -28,7 +31,7 @@ SELECT D.fdate                            AS dfdate,
     SUM(DECODE(D.typeCode,'H/Z',cnt,'H/Y',cnt,'H/G',cnt,0 )) AS H_Z,--货邮
     SUM(DECODE(D.typeCode,'W/Z',cnt,0 )) AS W_Z--正班
   FROM(
-select fdate , typeCode ,count(1) as cnt from(
+select fdate as fdate, typeCode ,count(1) as cnt from(
 
 select A.pa_idseq,TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') as fdate, A.PA_RSTC_SERVICETYPECODE as typeCode
 from PL_ARRIVAL A
@@ -43,27 +46,27 @@ WHERE  TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') BETWEEN TO_CHAR(TO_DATE(?,'yyyy-mm-
 ) D group by D.fdate order by D.fdate ) bbb
 left join (
 
-select TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') as fdate,count(1) as Acnt
+select TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') as fdate1,count(1) as Acnt
 from PL_ARRIVAL A
 WHERE  TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') BETWEEN TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND A.PA_RFST_FLIGHTSTATUS !='X'and A.PA_pa_mainflight is null
-group by TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd')) arr on  bbb.dfdate = arr.fdate
+group by TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd')) arr on  bbb.dfdate = arr.fdate1
 
 left join(
-select TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') as fdate , count(1) as Dcnt
+select TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') as fdate2 , count(1) as Dcnt
 from PL_DEPARTURE D
 WHERE  TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') BETWEEN TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND D.PD_RFST_FLIGHTSTATUS !='X' and  D.Pd_pd_mainflight is null
-group by TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd')) dep on bbb.dfdate = dep.fdate
+group by TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd')) dep on bbb.dfdate = dep.fdate2
 left join (
 
-select TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') as fdate,count(1) as AXcnt
+select TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') as fdate3,count(1) as AXcnt
 from PL_ARRIVAL A
 WHERE TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd') BETWEEN TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND A.PA_RFST_FLIGHTSTATUS ='X'and A.PA_pa_mainflight is null
-group by TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd')) Xarr on  bbb.dfdate = Xarr.fdate
+group by TO_CHAR(A.PA_SRTA- 5/24,'yyyy-mm-dd')) Xarr on  bbb.dfdate = Xarr.fdate3
 left join(
-select TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') as fdate , count(1) as DXcnt
+select TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') as fdate4 , count(1) as DXcnt
 from PL_DEPARTURE D
 WHERE  TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd') BETWEEN TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND TO_CHAR(TO_DATE(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') AND D.PD_RFST_FLIGHTSTATUS ='X' and  D.Pd_pd_mainflight is null
-group by TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd')) Xdep on bbb.dfdate = Xdep.fdate 
+group by TO_CHAR(D.PD_srtd- 5/24,'yyyy-mm-dd')) Xdep on bbb.dfdate = Xdep.fdate4 
 left join (
 select gjfdate ,count(1) as gjcnt from(
 
@@ -78,32 +81,84 @@ WHERE  D.PD_RCTT_COUNTRYTYPE    IN ('I','M','R') AND  (TO_CHAR(D.PD_srtd- 5/24,'
 ) group by gjfdate
 ) gjall on bbb.dfdate = gjall.gjfdate order by bbb.dfdate]]>
 	</queryString>
-	<field name="DFDATE" class="java.lang.String"/>
-	<field name="SUMCOUNT" class="java.lang.Double"/>
-	<field name="C_B" class="java.lang.Double"/>
-	<field name="H_G" class="java.lang.Double"/>
-	<field name="Z_P" class="java.lang.Double"/>
-	<field name="Q_B" class="java.lang.Double"/>
-	<field name="B_W" class="java.lang.Double"/>
-	<field name="X_L" class="java.lang.Double"/>
-	<field name="N_M" class="java.lang.Double"/>
-	<field name="Q_F" class="java.lang.Double"/>
-	<field name="F_J" class="java.lang.Double"/>
-	<field name="H_F" class="java.lang.Double"/>
-	<field name="U_H" class="java.lang.Double"/>
-	<field name="F_H" class="java.lang.Double"/>
-	<field name="H_Z" class="java.lang.Double"/>
-	<field name="W_Z" class="java.lang.Double"/>
-	<field name="FDATE" class="java.lang.String"/>
-	<field name="ACNT" class="java.lang.Double"/>
-	<field name="COLUMN_19" class="java.lang.String"/>
-	<field name="DCNT" class="java.lang.Double"/>
-	<field name="COLUMN_21" class="java.lang.String"/>
-	<field name="AXCNT" class="java.lang.Double"/>
-	<field name="COLUMN_23" class="java.lang.String"/>
-	<field name="DXCNT" class="java.lang.Double"/>
-	<field name="GJFDATE" class="java.lang.String"/>
-	<field name="GJCNT" class="java.lang.Double"/>
+	<field name="DFDATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DFDATE"/>
+	</field>
+	<field name="SUMCOUNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="SUMCOUNT"/>
+	</field>
+	<field name="C_B" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="C_B"/>
+	</field>
+	<field name="H_G" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="H_G"/>
+	</field>
+	<field name="Z_P" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="Z_P"/>
+	</field>
+	<field name="Q_B" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="Q_B"/>
+	</field>
+	<field name="B_W" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="B_W"/>
+	</field>
+	<field name="X_L" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="X_L"/>
+	</field>
+	<field name="N_M" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="N_M"/>
+	</field>
+	<field name="Q_F" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="Q_F"/>
+	</field>
+	<field name="F_J" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="F_J"/>
+	</field>
+	<field name="H_F" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="H_F"/>
+	</field>
+	<field name="U_H" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="U_H"/>
+	</field>
+	<field name="F_H" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="F_H"/>
+	</field>
+	<field name="H_Z" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="H_Z"/>
+	</field>
+	<field name="W_Z" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="W_Z"/>
+	</field>
+	<field name="FDATE1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FDATE1"/>
+	</field>
+	<field name="ACNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="ACNT"/>
+	</field>
+	<field name="FDATE2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FDATE2"/>
+	</field>
+	<field name="DCNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="DCNT"/>
+	</field>
+	<field name="FDATE3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FDATE3"/>
+	</field>
+	<field name="AXCNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="AXCNT"/>
+	</field>
+	<field name="FDATE4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FDATE4"/>
+	</field>
+	<field name="DXCNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="DXCNT"/>
+	</field>
+	<field name="GJFDATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GJFDATE"/>
+	</field>
+	<field name="GJCNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="GJCNT"/>
+	</field>
 	<variable name="sumAllCount" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{SUMCOUNT}]]></variableExpression>
 	</variable>
