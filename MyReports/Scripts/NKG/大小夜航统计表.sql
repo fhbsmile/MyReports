@@ -15,6 +15,25 @@ and pa.pa_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
 and pa.pa_rfst_flightstatus !='X'
 and pt.pt_rmsc_scenario = 1
 ) ga where ga.rn =1;
+
+-------------------
+select * from(
+select 
+ROW_NUMBER() OVER(PARTITION BY TRUNC(pd.PD_SRTD-5/24) ORDER BY pd.pd_atot DESC) rn,
+pd.pd_idseq,
+pd.pd_flightnumber,
+pd.pd_srtd,
+pd.pd_etot,
+pd.pd_atot,
+pt.pt_routing as drouting,
+TRUNC(pd.PD_SRTD-5/24) as dd
+from pl_departure pd, pl_turn pt
+where pt.pt_pd_departure = pd.pd_idseq(+)
+and TRUNC(pd.PD_SRTD-5/24) BETWEEN to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') AND to_date('2019-01-09 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
+and pd.pd_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
+and pd.pd_rfst_flightstatus !='X'
+and pt.pt_rmsc_scenario = 1
+) gd where gd.rn =1;
 ----------------
 select gga.da,gga.pa_flightnumber ,gga.arouting,COALESCE(gga.pa_aldt,gga.pa_eldt,gga.pa_srta) as atime, ggd.pd_flightnumber,ggd.drouting,COALESCE(ggd.pd_atot,ggd.pd_etot,ggd.pd_srtd) as dtime  from (
 select * from (
@@ -29,7 +48,7 @@ pt.pt_routing as arouting,
 TRUNC(pa.PA_SRTA-5/24) as da
 from pl_arrival pa, pl_turn pt
 where pt.pt_pa_arrival = pa.pa_idseq(+)
-and TRUNC(pa.PA_SRTA-5/24) BETWEEN to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') AND to_date('2019-01-09 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
+and TRUNC(pa.PA_SRTA-5/24) BETWEEN to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') AND to_date('2019-01-31 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
 and pa.pa_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
 and pa.pa_rfst_flightstatus !='X'
 and pt.pt_rmsc_scenario = 1
@@ -45,7 +64,7 @@ pt.pt_routing as drouting,
 TRUNC(pd.PD_SRTD-5/24) as dd
 from pl_departure pd, pl_turn pt
 where pt.pt_pd_departure = pd.pd_idseq(+)
-and TRUNC(pd.PD_SRTD-5/24) BETWEEN to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') AND to_date('2019-01-09 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
+and TRUNC(pd.PD_SRTD-5/24) BETWEEN to_date('2019-01-01 00:00:00', 'YYYY-MM-DD hh24:mi:ss') AND to_date('2019-01-31 23:59:59', 'YYYY-MM-DD hh24:mi:ss')
 and pd.pd_rstc_servicetypecode   IN ('W/Z','C/B','L/W')
 and pd.pd_rfst_flightstatus !='X'
 and pt.pt_rmsc_scenario = 1
