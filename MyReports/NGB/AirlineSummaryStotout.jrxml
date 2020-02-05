@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="op_airlinesummarystotout" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="39" bottomMargin="20" uuid="a5731f7b-4306-422c-9fd6-22c458966411">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NB-NGB_AOS_TST"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="604"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="385"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="306"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="688"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Airline Summary"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION3" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION4" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION5" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION6" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SORT1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SORT2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SORT3" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_OPTION7" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_LOGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["reports/CGK/Logo.gif"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from
+(
+select
+  'Arr' as ad,
+  'Y' as arr,
+  'N' as dep,
+  rmsc.rmsc_name as scenario,
+  pa.pa_rstc_servicetypecode as stc,
+  ralA.ral_internal as airline,
+  count(*) as arrivalmoves,
+  0 as departuremoves,
+  pa.pa_stotoutstation as reftime
+from
+  rm_scenario rmsc,
+  pl_turn pt,
+  pl_arrival pa,
+  ref_airline ralA
+where
+  pt.pt_rmsc_scenario = rmsc.rmsc_idseq and
+  pa.pa_stotoutstation is not null and
+  pt.pt_pa_arrival is not null and
+  pt.pt_pa_arrival=pa.pa_idseq(+)  and
+  pa.pa_ral_airline=ralA.ral_internal(+)
+group by 'Arr', 'Y', 'N', rmsc.rmsc_name, pa.pa_rstc_servicetypecode, ralA.ral_internal,0, pa.pa_stotoutstation
+)
+
+union
+
+(
+select
+  'Dep' as ad,
+  'N' as arr,
+  'Y' as dep,
+  rmsc.rmsc_name as scenario,
+  pd.pd_rstc_servicetypecode as stc,
+  ralD.ral_internal as airline,
+  0 as arrivalmoves,
+  count(*) as departuremoves,
+  pd.pd_sobt as reftime
+from
+  rm_scenario rmsc,
+  pl_turn pt,
+  pl_departure pd,
+  ref_airline ralD
+where
+  pt.pt_rmsc_scenario = rmsc.rmsc_idseq and
+  pd.pd_sobt is not null and
+  pt.pt_pd_departure is not null  and
+  pt.pt_pd_departure=pd.pd_idseq(+)  and
+  pd.pd_ral_airline=ralD.ral_internal(+)
+group by 'Dep', 'N', 'Y', rmsc.rmsc_name, pd.pd_rstc_servicetypecode,ralD.ral_internal, 0, pd.pd_sobt
+)
+order by 6, 5, 1]]>
+	</queryString>
+	<field name="AD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AD"/>
+	</field>
+	<field name="ARR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ARR"/>
+	</field>
+	<field name="DEP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DEP"/>
+	</field>
+	<field name="SCENARIO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SCENARIO"/>
+	</field>
+	<field name="STC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STC"/>
+	</field>
+	<field name="AIRLINE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AIRLINE"/>
+	</field>
+	<field name="ARRIVALMOVES" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="ARRIVALMOVES"/>
+	</field>
+	<field name="DEPARTUREMOVES" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="DEPARTUREMOVES"/>
+	</field>
+	<field name="REFTIME" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="REFTIME"/>
+	</field>
+	<variable name="VAR_MovesGroupSum" class="java.lang.Double" resetType="Group" resetGroup="airlineStc" calculation="Sum">
+		<variableExpression><![CDATA[new java.lang.Double($F{ARRIVALMOVES}.doubleValue() + $F{DEPARTUREMOVES}.doubleValue())]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="VAR_MovesTotalArrSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARRIVALMOVES}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="VAR_MovesTotalDepSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEPARTUREMOVES}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="VAR_MovesTotalSum" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[new java.lang.Double( $F{ARRIVALMOVES}.doubleValue()+ $F{DEPARTUREMOVES}.doubleValue() )]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="VAR_MovesGroupArrSum" class="java.lang.Double" resetType="Group" resetGroup="airlineStc" calculation="Sum">
+		<variableExpression><![CDATA[$F{ARRIVALMOVES}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<variable name="VAR_MovesGroupDepSum" class="java.lang.Double" resetType="Group" resetGroup="airlineStc" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEPARTUREMOVES}]]></variableExpression>
+		<initialValueExpression><![CDATA[new java.lang.Double(0)]]></initialValueExpression>
+	</variable>
+	<group name="airlineStc">
+		<groupExpression><![CDATA[$F{AIRLINE}+"#"+$F{STC}]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="12" splitType="Stretch">
+				<textField isBlankWhenNull="false">
+					<reportElement key="FLD_Airline" x="0" y="0" width="119" height="12" uuid="d3ef4813-4278-481b-b1a9-c8d44d468414"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement>
+						<font fontName="Courier New" pdfFontName="Courier"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AIRLINE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement key="FLD_STC" x="125" y="0" width="31" height="12" uuid="e7ca00ff-b617-4613-bd62-d5c4aa5647b3"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" pdfFontName="Courier"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{STC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement key="FLD_MovesArr" x="295" y="0" width="52" height="12" uuid="87d2b0c0-a5ca-48c9-818e-b5d35bc98155">
+						<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION6}.equals( "Y" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" pdfFontName="Courier"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VAR_MovesGroupArrSum}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement key="FLD_MovesDep" x="355" y="0" width="52" height="12" uuid="48fa9111-5cc2-4bd4-a6ab-72ad7e07fa4a">
+						<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION7}.equals( "Y" ))]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" pdfFontName="Courier"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VAR_MovesGroupDepSum}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="false">
+					<reportElement key="FLD_MovesSum" x="415" y="0" width="52" height="12" uuid="cdbf0967-e772-4f64-8e76-ad05bb8f321b"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" pdfFontName="Courier"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{VAR_MovesGroupSum}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Prevent"/>
+	</background>
+	<title>
+		<band height="262" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option7" positionType="Float" mode="Transparent" x="120" y="161" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="65a938b6-def4-4a9c-bb37-a3f5297dae20"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION7}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option6" positionType="Float" mode="Transparent" x="120" y="147" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="42fe6dc2-6a11-4742-b8a7-f6857c7c6955"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION6}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Sort1" positionType="FixRelativeToBottom" mode="Transparent" x="175" y="178" width="306" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a246fc43-d9c8-4abf-80f7-4caf0fd104ad"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SORT1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_AOS1" mode="Transparent" x="0" y="5" width="58" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="6040836d-3bf1-4e3d-b00e-43b7b1481620"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="24" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-BoldOblique" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[AOS]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="PA_Titel" mode="Opaque" x="0" y="40" width="482" height="18" forecolor="#000000" backcolor="#FFFFFF" uuid="85f33498-7b39-4282-b400-a534fc89bf8d"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="14" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option1" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="63" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a0e94c0b-0a1b-4f1d-b82e-8c2a89df9914"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Scenario         :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer1" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="63" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f924a20a-df09-4bfa-a909-edf2cb2ba98d">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION1}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option1" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="63" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="a660f8a8-81a8-4a9a-b3ad-84900a58509a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option2" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="77" width="119" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="958475aa-d4c2-4851-bc75-85fc17603a90"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Start Time(STOTout)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer2" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="77" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="4400f002-51e2-4228-b7be-a880c146b5d9">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION2}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option2" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="77" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6fd3cc77-e503-41ca-9551-48232f9c7ef1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option3" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="91" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="ece70798-d714-4906-81c5-efda56740380"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[End Time   (SOBT):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer3" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="91" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7ab1f048-70e8-45a3-b84c-331f1a1698ea">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION3}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option3" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="91" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="0e62359d-1e97-496b-87a4-9c4ac22856a8"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option4" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="105" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="aa811261-f41e-4bf6-86e9-1031cb6f8328"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Service Type Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Option4-1" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="119" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="394b5bb1-a697-4302-845e-b06e3ff98a00"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[            [STC]:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer4" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="119" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9e67cbc5-73c2-4d87-af2a-2e81fb961efe">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION4}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option4" positionType="Float" mode="Transparent" x="120" y="119" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="f4659e47-712c-45f8-8fd4-bde34caef7b4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION4}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option5" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="133" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="8cb149f0-6bc0-4042-a437-f66a2713833a"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Airline          :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer5" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="133" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d1d0f854-e972-4d9b-bded-a74008d96cc0">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION5}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Option5" positionType="Float" mode="Transparent" x="120" y="133" width="362" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="46bfb499-4f84-43b3-a9fd-4835c0216a95"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_OPTION5}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Option6" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="147" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9fcf0876-6d50-4855-878d-ee66f24d6da0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Arrivals         :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer6" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="147" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7929a5cf-6554-4507-8c28-517684c55978">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION6}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Y]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Option7" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="161" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cb121eb8-2076-4b8a-99b4-2fc32436a496"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Departures       :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_OptLeer7" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="161" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="6f8c3eeb-fecb-4d7a-9a67-28338289cce1">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION7}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Y]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="175" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="29c78c9a-98f3-48b9-972e-40ece24a0f95"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="LB_Sort" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="178" width="110" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9efac1bd-9d0a-4fec-9f0c-1d544662b1bb"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Sort             :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Sort1Leer" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="178" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="eae9bd8e-aa7d-442d-87af-dcf078a9be50">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_SORT1}.length()<1)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Airline]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Sort2" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="192" width="362" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="ec0b3079-2f19-4222-870b-43aa500fd00d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SORT2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="PA_Sort3" positionType="FixRelativeToBottom" mode="Transparent" x="120" y="206" width="362" height="12" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="844f0ca9-cb12-4fd5-97ca-bf6ed6c177c2"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SORT3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="LB_Airline-1" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="248" width="119" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="eba77413-6f6d-4566-bd7c-f76ad59b6950"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Airline]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_STC-1" positionType="FixRelativeToBottom" mode="Transparent" x="125" y="248" width="31" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="9de40fdd-7c2f-4118-8430-5af8f93aa564"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[STC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Moves-1" positionType="FixRelativeToBottom" mode="Transparent" x="295" y="238" width="102" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c480bdcf-c720-44eb-8217-05efe6761099"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Movements]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesArr-1" positionType="FixRelativeToBottom" mode="Transparent" x="295" y="248" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="223c06c6-6ef6-4e02-baf5-7f4d85ceedf7"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Arrivals]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesDep-1" positionType="FixRelativeToBottom" mode="Transparent" x="355" y="248" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="3cb21aac-28bb-4fd6-9a6e-c03e823f1bdf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Depart.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesSum-1" positionType="FixRelativeToBottom" mode="Transparent" x="415" y="248" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5f466edf-5e01-4f50-89d7-3bbf8345873e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Sum]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-2" positionType="FixRelativeToBottom" mode="Opaque" x="0" y="260" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="922fd6a2-2d3b-4d9c-ad97-6bc3530bd9b4"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="69" splitType="Prevent">
+			<printWhenExpression><![CDATA[new Boolean(!new Integer(1).equals($V{PAGE_NUMBER}))]]></printWhenExpression>
+			<staticText>
+				<reportElement key="LB_AOS2" mode="Transparent" x="1" y="5" width="58" height="30" forecolor="#000000" backcolor="#FFFFFF" uuid="1b1d48a6-4553-418d-91c1-b5680d35bca8"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Arial" size="24" isBold="true" isItalic="true" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-BoldOblique" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[AOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Airline" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="55" width="119" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="dd5620b1-9d5f-424d-bfd2-e19677a11624"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Airline]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_STC" positionType="FixRelativeToBottom" mode="Transparent" x="125" y="55" width="31" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="42b12329-7257-4cae-931c-b80801581b10"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[STC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_Moves" positionType="FixRelativeToBottom" mode="Transparent" x="295" y="45" width="102" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="c2c1eecc-c448-4e30-aaab-de9767953fe6"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Movements]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesArr" positionType="FixRelativeToBottom" mode="Transparent" x="295" y="55" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="5b52c230-6b68-422f-8cf4-59a181556afd"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Arrivals]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesDep" positionType="FixRelativeToBottom" mode="Transparent" x="355" y="55" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="e3c4bf3b-93f3-4597-aa68-8de53689491d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Departures]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_MovesSum" positionType="FixRelativeToBottom" mode="Transparent" x="415" y="55" width="52" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="18f2f34c-b5aa-4cef-b2bf-37093ac7d419"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Sum]]></text>
+			</staticText>
+			<line>
+				<reportElement key="line-1" positionType="FixRelativeToBottom" mode="Transparent" x="0" y="67" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="b793b165-221b-4c35-936e-0ce0a876016a"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25" splitType="Prevent">
+			<line>
+				<reportElement key="line" mode="Opaque" x="0" y="3" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="4021473b-8495-4ff9-9637-b0622307eb19"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="Fld_PageActual1" mode="Transparent" x="393" y="10" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="7b9a6150-058d-47ad-b6e8-822f0e427618"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="Fld_PageCount1" mode="Transparent" x="443" y="10" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="43d6f571-2698-4e93-9d4b-e3a38039e07b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["of "+ $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="false">
+				<reportElement key="FLD_Timestamp1" x="0" y="10" width="175" height="12" uuid="9e026738-5cdd-453d-a5f1-5e2938ead5cf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="25" splitType="Prevent">
+			<line>
+				<reportElement key="line" mode="Opaque" x="0" y="3" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="0787673d-6503-46c8-b668-42abb04e5ba2"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="FLD_PageActual2" mode="Transparent" x="393" y="10" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="62d28d6c-a2d0-4094-a79e-c4bbaf9d49d1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} + " "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="" isBlankWhenNull="false">
+				<reportElement key="FLD_PageCount2" mode="Transparent" x="443" y="10" width="40" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="cd151b5f-bed1-4e87-973e-2aaaa8320178"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA["of "+ $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="dd/MM/yyyy HH.mm.ss" isBlankWhenNull="false">
+				<reportElement key="FLD_Timestamp2" x="0" y="10" width="175" height="12" uuid="16a74f0b-0b3e-4d9b-94d6-763f5390e48e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="20" splitType="Prevent">
+			<line>
+				<reportElement key="line" mode="Opaque" x="0" y="3" width="483" height="1" forecolor="#000000" backcolor="#FFFFFF" uuid="70ee71b7-30d7-44de-8327-0bba8c6d0194"/>
+				<graphicElement fill="Solid">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="LB_Total" x="0" y="6" width="119" height="12" uuid="0d7b4965-3622-4b72-9251-2948e434301b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="LB_STC-2" positionType="FixRelativeToBottom" mode="Transparent" x="125" y="6" width="31" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="d7f46722-a346-487b-84df-46acf447c645"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None">
+					<font fontName="Courier New" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Courier" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[all]]></text>
+			</staticText>
+			<textField pattern="#,##0" isBlankWhenNull="false">
+				<reportElement key="FLD_MovesArrSum" x="295" y="6" width="52" height="12" uuid="7d597543-e7dd-4f07-b506-4461a43ff8c1">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION6}.equals( "Y" ))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VAR_MovesTotalArrSum}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
+				<reportElement key="FLD_MovesDepSum" x="355" y="6" width="52" height="12" uuid="e56275b3-a92f-4ef6-a317-e3ab66019f3f">
+					<printWhenExpression><![CDATA[new Boolean($P{REPORT_OPTION7}.equals( "Y" ))]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VAR_MovesTotalDepSum}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0" isBlankWhenNull="false">
+				<reportElement key="FLD_MovesTotalSum" x="415" y="6" width="52" height="12" uuid="fdefd3c4-de71-48d7-b075-30c86c6f2f2f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" pdfFontName="Courier"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{VAR_MovesTotalSum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
