@@ -17,7 +17,7 @@ from pl_turn,pl_arrival,pl_departure
 where pl_turn.pt_pa_arrival = pa_idseq(+)
 AND pl_turn.pt_pd_departure = pd_idseq(+)
 AND pt_rmsc_scenario=1
-AND (pa_sibt  between to_date('2019-12-19 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2019-12-20 00:00:00','yyyy-mm-dd hh24:mi:ss')  or pd_sobt between to_date('2019-12-19 00:00:00','yyyy-mm-dd hh24:mi:ss') AND to_date('2019-12-20 00:00:00','yyyy-mm-dd hh24:mi:ss') )]]>
+AND (pa_sibt  between to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss')  or pd_sobt between to_date(?,'yyyy-mm-dd hh24:mi:ss') AND to_date(?,'yyyy-mm-dd hh24:mi:ss') )]]>
 	</queryString>
 	<field name="PT_IDSEQ" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.label" value="PT_IDSEQ"/>
@@ -136,10 +136,10 @@ AND (pa_sibt  between to_date('2019-12-19 00:00:00','yyyy-mm-dd hh24:mi:ss') AND
 	<field name="PD_COUNTERS" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="PD_COUNTERS"/>
 	</field>
-	<variable name="arr_num" class="java.lang.Integer" calculation="DistinctCount">
+	<variable name="arr_num" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></variableExpression>
 	</variable>
-	<variable name="dep_num" class="java.lang.Integer" calculation="DistinctCount">
+	<variable name="dep_num" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></variableExpression>
 	</variable>
 	<variable name="total_flt" class="java.lang.Integer">
