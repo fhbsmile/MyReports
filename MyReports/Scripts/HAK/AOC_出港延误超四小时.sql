@@ -34,6 +34,7 @@ from(
 select pa_idseq, 
 pa.pa_flightnumber,
 pa.pa_srta,
+pa.pa_aldt,
 pd_idseq,
 pd.pd_sobt,
 pd.pd_flightnumber,
