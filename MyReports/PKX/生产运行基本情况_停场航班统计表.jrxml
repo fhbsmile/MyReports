@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="生产运行基本情况_停场情况统计表" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="生产运行基本情况_停场情况统计表" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d673524a-0f94-457a-b0ce-d1d67c222aa4">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NB-NGB_AOS_TST"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="358"/>
-	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="636"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="141"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="853"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="REPORT_OPTION1" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select pa_flightnumber,pa_ral_airline,pa_rstc_servicetypecode,pa_sibt,pa.pa_aldt,pa_registration,PA_RSTA_STAND,PD_RSTA_STAND,pd.pd_flightnumber,pd_ral_airline,pd_rstc_servicetypecode,pd.pd_sobt,pd_atot,pd_registration from pl_arrival pa,pl_departure pd,pl_turn pt,rm_scenario rmsc 
+		<![CDATA[  select pa_flightnumber,pa_ral_airline,pa_rstc_servicetypecode,pa_sibt,pa.pa_aldt,pa.pa_aibt,pa_registration,pa_ract_aircrafttype,ract.ract_sizecategory,pa_rsta_stand,pd_rsta_stand,pd.pd_flightnumber,pd_ral_airline,pd_rstc_servicetypecode,pd.pd_sobt,pd.pd_atot,pd.pd_aobt,pd_registration from pl_arrival pa,pl_departure pd,pl_turn pt,rm_scenario rmsc,ref_aircrafttype ract 
    where  pt.pt_rmsc_scenario = rmsc.rmsc_idseq and
   pt.pt_pa_arrival=pa.pa_idseq(+)  and
   pt.pt_pd_departure=pd.pd_idseq(+)  and
+  pa_ract_aircrafttype = ract.ract_internalcode(+) and
   rmsc_idseq =1 and
-  pa.pa_aldt <= to_date(CONCAT(substr(?, 1, 8),' 0200'),'yyyy-mm-dd hh24mi')+1 and
-  (  pd.pd_atot >= to_date(CONCAT(substr(?, 1, 8),' 0600'),'yyyy-mm-dd hh24mi')+1 or  pd.pd_atot is null
+  pa.pa_aldt <= to_date(concat(substr(?, 1, 8),' 0200'),'yyyy-mm-dd hh24mi')+1 and
+  (  pd.pd_atot >= to_date(concat(substr(?, 1, 8),' 0600'),'yyyy-mm-dd hh24mi')+1 or  pd.pd_atot is null
   )]]>
 	</queryString>
 	<field name="PA_FLIGHTNUMBER" class="java.lang.String">
@@ -34,8 +44,17 @@
 	<field name="PA_ALDT" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="PA_ALDT"/>
 	</field>
+	<field name="PA_AIBT" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="PA_AIBT"/>
+	</field>
 	<field name="PA_REGISTRATION" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="PA_REGISTRATION"/>
+	</field>
+	<field name="PA_RACT_AIRCRAFTTYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PA_RACT_AIRCRAFTTYPE"/>
+	</field>
+	<field name="RACT_SIZECATEGORY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RACT_SIZECATEGORY"/>
 	</field>
 	<field name="PA_RSTA_STAND" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="PA_RSTA_STAND"/>
@@ -57,6 +76,9 @@
 	</field>
 	<field name="PD_ATOT" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.label" value="PD_ATOT"/>
+	</field>
+	<field name="PD_AOBT" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="PD_AOBT"/>
 	</field>
 	<field name="PD_REGISTRATION" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="PD_REGISTRATION"/>
@@ -91,7 +113,7 @@
 				<text><![CDATA[Flight(A)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="340" y="80" width="60" height="20" uuid="dabac4da-c4d0-48d6-9567-2b3a56a04f2b">
+				<reportElement x="480" y="80" width="60" height="20" uuid="dabac4da-c4d0-48d6-9567-2b3a56a04f2b">
 					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 					<property name="com.jaspersoft.studio.report.description" value=""/>
@@ -106,7 +128,7 @@
 				<text><![CDATA[Flight(D)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="400" y="80" width="80" height="20" uuid="2640debb-b19f-4aaf-baf5-cef26b5bfe4b">
+				<reportElement x="540" y="80" width="80" height="20" uuid="2640debb-b19f-4aaf-baf5-cef26b5bfe4b">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -119,7 +141,7 @@
 				<text><![CDATA[SOBT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="480" y="80" width="80" height="20" uuid="efc8e85f-c61d-4cbe-835f-7cad4f9e0066">
+				<reportElement x="620" y="80" width="80" height="20" uuid="efc8e85f-c61d-4cbe-835f-7cad4f9e0066">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -129,7 +151,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[ATOT]]></text>
+				<text><![CDATA[AOBT]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="100" y="60" width="80" height="20" uuid="23671534-49ad-439e-ad10-5a75cb4eb6c7">
@@ -160,7 +182,7 @@
 				<text><![CDATA[NO.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="260" y="80" width="40" height="20" uuid="16ed3d94-fdf3-4ddb-b0b5-553b3331c8e9">
+				<reportElement x="340" y="80" width="40" height="20" uuid="16ed3d94-fdf3-4ddb-b0b5-553b3331c8e9">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -200,7 +222,7 @@
 				<text><![CDATA[SIBT]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="300" y="80" width="40" height="20" uuid="d69d36fd-a0cc-4194-aecd-6184e88ae0d1">
+				<reportElement x="380" y="80" width="40" height="20" uuid="d69d36fd-a0cc-4194-aecd-6184e88ae0d1">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -212,6 +234,47 @@
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Registration]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="80" width="80" height="20" uuid="95df9990-94b2-4ad8-8601-c4510eedbc38">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[AIBT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="80" width="30" height="20" uuid="c58e5163-0684-4f74-927f-552c6e54892e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[ACT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="80" width="30" height="20" uuid="6aef92ed-81ed-43ef-a06d-c01b508470a6">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Size]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -232,7 +295,7 @@
 				<textFieldExpression><![CDATA[$F{PA_FLIGHTNUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="340" y="0" width="60" height="20" uuid="9ea29407-42ca-4a90-8ec7-563387f2dc93">
+				<reportElement x="480" y="0" width="60" height="20" uuid="9ea29407-42ca-4a90-8ec7-563387f2dc93">
 					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
 					<property name="com.jaspersoft.studio.report.description" value=""/>
@@ -247,7 +310,7 @@
 				<textFieldExpression><![CDATA[$F{PD_FLIGHTNUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
-				<reportElement x="400" y="0" width="80" height="20" uuid="be54f1e9-fb44-4bad-80e7-989d2c82562d">
+				<reportElement x="540" y="0" width="80" height="20" uuid="be54f1e9-fb44-4bad-80e7-989d2c82562d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
@@ -261,7 +324,7 @@
 				<textFieldExpression><![CDATA[$F{PD_SOBT}]]></textFieldExpression>
 			</textField>
 			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
-				<reportElement x="480" y="0" width="80" height="20" uuid="d2ff76dd-dca7-4561-96c5-90f87cebbd7e">
+				<reportElement x="620" y="0" width="80" height="20" uuid="d2ff76dd-dca7-4561-96c5-90f87cebbd7e">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -271,7 +334,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{PD_ATOT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PD_AOBT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="40" height="20" uuid="8fc4016c-6020-4652-a1e2-474b831bcc21">
@@ -289,7 +352,7 @@
 				<textFieldExpression><![CDATA[$V{index}.intValue()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="260" y="0" width="40" height="20" uuid="8b14365d-038d-4aeb-9451-fc26b57049b7">
+				<reportElement x="340" y="0" width="40" height="20" uuid="8b14365d-038d-4aeb-9451-fc26b57049b7">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -329,7 +392,7 @@
 				<textFieldExpression><![CDATA[$F{PA_ALDT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="300" y="0" width="40" height="20" uuid="151371d8-87f5-4ed0-b303-2d42de6cb383">
+				<reportElement x="380" y="0" width="40" height="20" uuid="151371d8-87f5-4ed0-b303-2d42de6cb383">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -342,13 +405,56 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{PA_REGISTRATION}]]></textFieldExpression>
 			</textField>
+			<textField pattern="yyyy-MM-dd HH:mm" isBlankWhenNull="true">
+				<reportElement x="260" y="0" width="80" height="20" uuid="b6409615-3127-4c40-a8f3-242f224cb91c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_AIBT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="420" y="0" width="30" height="20" uuid="5ce19c86-e8b4-4e22-abd4-40e0d338846e">
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+					<property name="com.jaspersoft.studio.report.description" value=""/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{PA_RACT_AIRCRAFTTYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="450" y="0" width="30" height="20" uuid="c31986f5-e733-4915-a8ee-41c993715f81">
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NKG_AODB_PRD"/>
+					<property name="com.jaspersoft.studio.report.description" value=""/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{RACT_SIZECATEGORY}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<summary>
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="0" y="0" width="560" height="20" uuid="13a7124d-7004-45c6-a03c-16cf3d85d553">
+				<reportElement x="0" y="0" width="700" height="20" uuid="13a7124d-7004-45c6-a03c-16cf3d85d553">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
