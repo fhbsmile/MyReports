@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="小时架次实际时间" pageWidth="1191" pageHeight="842" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="1151" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ff4aa779-2ab7-4034-b32d-e6fb3159c7fe">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="105"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Adapter\DataAdapterNKG_PRD.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="233"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="762"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<style name="Crosstab_CH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CG" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CT" mode="Opaque" backcolor="#005FB3">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<queryString>
+		<![CDATA[select  to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd') as tjdate,pa_rtrm_terminal as terminal,rsv_standtype as stype,tjtime, count(1) as cnt from (
+select 
+'0800'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+
+select 
+'0830'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'0900'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'0930'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1000'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1030'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1100'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1130'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1200'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1230'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1300'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1330'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1400'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1430'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1500'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1530'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1600'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1630'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1700'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1730'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1800'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1830'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1900'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'1930'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2000'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+
+select 
+'2030'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2100'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2130'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2200'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2230'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2300'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+UNION ALL 
+select 
+'2330'  tjtime,
+pt_idseq,
+pa_rfst_flightstatus,
+pa_ral_airline,
+pa_flightnumber,
+pa_srta,
+pa_aldt,
+pa_aibt,
+pa_rsta_stand,
+pa_rtrm_terminal,
+rsv_standtype,
+pd_srtd,
+pd_aobt,
+pd_atot
+from pl_turn,pl_arrival,pl_departure,ref_standversion
+where pl_turn.pt_pa_arrival = pa_idseq(+)
+AND pl_turn.pt_pd_departure = pd_idseq(+)
+AND pa_rsta_refstand = RSV_RSTA_STAND(+)
+AND pt_rmsc_scenario=1
+) F
+where  pa_rfst_flightstatus in ('L','N','Z')
+AND pa_ral_airline not in ('CF')
+AND pa_flightnumber not like 'CA10%' 
+AND 
+( F.pa_aldt < to_date(to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')||' '||F.tjtime,'yyyy-mm-dd hh24mi') and F.pd_atot > to_date(to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')||' '||F.tjtime,'yyyy-mm-dd hh24mi')
+or ( F.pa_aldt < to_date(to_char(to_date(?,'yyyy-mm-dd hh24:mi:ss'),'yyyy-mm-dd')||' '||F.tjtime,'yyyy-mm-dd hh24mi') and F.pd_atot is null)
+  )
+group by F.pa_rtrm_terminal,F.rsv_standtype,F.tjtime]]>
+	</queryString>
+	<field name="TJDATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TJDATE"/>
+	</field>
+	<field name="TERMINAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TERMINAL"/>
+	</field>
+	<field name="STYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STYPE"/>
+	</field>
+	<field name="TJTIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TJTIME"/>
+	</field>
+	<field name="CNT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="CNT"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="150" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<staticText>
+				<reportElement x="54" y="38" width="399" height="52" uuid="b02fb680-87bb-402a-b789-6cc0a113298a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[南京机场航班停场高峰统计]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="319" y="118" width="100" height="20" uuid="09656b9d-fe3c-4ef9-8712-81b45c8040bc"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[时间： ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="419" y="118" width="100" height="20" uuid="ed318f2b-b0c9-4418-91ca-bbbd1f8616d0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TJDATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="320" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+			<crosstab>
+				<reportElement x="0" y="0" width="1151" height="320" uuid="e901f4ca-3867-4f3a-9235-5cef4a135d31">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.crosstab.style.header" value="Crosstab_CH"/>
+					<property name="com.jaspersoft.studio.crosstab.style.group" value="Crosstab_CG"/>
+					<property name="com.jaspersoft.studio.crosstab.style.total" value="Crosstab_CT"/>
+					<property name="com.jaspersoft.studio.crosstab.style.detail" value="Crosstab_CD"/>
+				</reportElement>
+				<rowGroup name="TERMINAL" width="30" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{TERMINAL}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+							<textField>
+								<reportElement x="0" y="0" width="30" height="40" uuid="1352f7b0-0266-4f06-b666-7831ca09584c"/>
+								<textFieldExpression><![CDATA[$V{TERMINAL}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CT">
+							<staticText>
+								<reportElement x="0" y="0" width="30" height="20" forecolor="#FFFFFF" uuid="bc924409-8009-4d1d-b867-c4defce36b51"/>
+								<text><![CDATA[Total TERMINAL]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<rowGroup name="STYPE" width="30" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{STYPE}]]></bucketExpression>
+					</bucket>
+					<crosstabRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<textField>
+								<reportElement x="0" y="0" width="30" height="20" uuid="d6199b73-a0ee-4704-a989-5e5cf614f364"/>
+								<textFieldExpression><![CDATA[$V{STYPE}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabRowHeader>
+					<crosstabTotalRowHeader>
+						<cellContents mode="Opaque" style="Crosstab_CG">
+							<staticText>
+								<reportElement x="0" y="0" width="30" height="20" uuid="076b3d01-d888-45bd-a4ff-12c7a07ee079"/>
+								<text><![CDATA[Total STYPE]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalRowHeader>
+				</rowGroup>
+				<columnGroup name="TJTIME" height="20" totalPosition="End">
+					<bucket class="java.lang.String">
+						<bucketExpression><![CDATA[$F{TJTIME}]]></bucketExpression>
+					</bucket>
+					<crosstabColumnHeader>
+						<cellContents mode="Opaque" style="Crosstab_CH">
+							<textField>
+								<reportElement x="0" y="0" width="25" height="20" uuid="a45fa633-023a-4260-83c5-13644f7092f1"/>
+								<textFieldExpression><![CDATA[$V{TJTIME}]]></textFieldExpression>
+							</textField>
+						</cellContents>
+					</crosstabColumnHeader>
+					<crosstabTotalColumnHeader>
+						<cellContents mode="Opaque" style="Crosstab_CT">
+							<staticText>
+								<reportElement x="0" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="079c39ab-42c6-4813-b5dd-1ad2082558c4"/>
+								<text><![CDATA[Total TJTIME]]></text>
+							</staticText>
+						</cellContents>
+					</crosstabTotalColumnHeader>
+				</columnGroup>
+				<measure name="CNT_MEASURE" class="java.lang.Integer" calculation="Sum">
+					<measureExpression><![CDATA[$F{CNT}]]></measureExpression>
+				</measure>
+				<crosstabCell width="25" height="20">
+					<cellContents mode="Opaque" style="Crosstab_CD">
+						<textField>
+							<reportElement x="0" y="0" width="25" height="20" uuid="95ce26a3-67e5-4eaa-993b-8adb8a5b03bc"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="20" columnTotalGroup="TJTIME">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField>
+							<reportElement x="0" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="fc12a4e3-dbab-47af-b525-e8e7ba526bb7"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="25" height="20" rowTotalGroup="TERMINAL">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField>
+							<reportElement x="0" y="0" width="25" height="20" forecolor="#FFFFFF" uuid="047007a0-6db2-491b-a595-90fadbe0dfff"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="20" rowTotalGroup="TERMINAL" columnTotalGroup="TJTIME">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField>
+							<reportElement x="0" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="c1e744ec-f973-4ca3-9031-6204d88b8cf7"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="25" height="20" rowTotalGroup="STYPE">
+					<cellContents mode="Opaque" style="Crosstab_CG">
+						<textField>
+							<reportElement x="0" y="0" width="25" height="20" uuid="206ddc11-d3a1-44db-8e65-9d9fbe5b87ec"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+				<crosstabCell width="40" height="20" rowTotalGroup="STYPE" columnTotalGroup="TJTIME">
+					<cellContents mode="Opaque" style="Crosstab_CT">
+						<textField>
+							<reportElement x="0" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="1bafa2f3-e923-4b16-a1f0-2aef6a5cb9a7"/>
+							<textFieldExpression><![CDATA[$V{CNT_MEASURE}]]></textFieldExpression>
+						</textField>
+					</cellContents>
+				</crosstabCell>
+			</crosstab>
+		</band>
+	</summary>
+</jasperReport>
